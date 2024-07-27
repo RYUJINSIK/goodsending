@@ -21,7 +21,7 @@ const Header = () => {
   const userName = "사용자 이름";
 
   return (
-    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white">
+    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
       <div className="flex items-center">
         <img src="../public/icon/LogoBlack.png" alt="logo" className="h-8" />
       </div>

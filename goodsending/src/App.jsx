@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import Header from "./components/Header";
 import "./App.css";
+import Main from "./pages/Main";
 
 function App() {
   return (
     <div>
       <Header />
+      <Main />
       <Button className="bg-primary text-white hover:bg-primary-dark">
         Primary Button
       </Button>
