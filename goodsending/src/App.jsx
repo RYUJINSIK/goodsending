@@ -6,9 +6,15 @@ import Main from "./pages/Main";
 function App() {
   return (
     <div>
-      <Button>Click me</Button>
       <Header />
       <Main />
+      <Button className="bg-primary text-white hover:bg-primary-dark">
+        Primary Button
+      </Button>
+      <Button className="bg-secondary text-black hover:bg-secondary-dark">
+        Secondary Button
+      </Button>
+      <Button variant="default">Primary Button</Button>
     </div>
   );
 }
