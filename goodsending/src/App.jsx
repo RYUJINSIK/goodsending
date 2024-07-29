@@ -15,6 +15,7 @@ function App() {
         Secondary Button
       </Button>
       <Button variant="default">Primary Button</Button>
+      <Button variant="outline">Primary Button</Button>
     </div>
   );
 }
