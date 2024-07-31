@@ -11,7 +11,6 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
-// import BlackLogo from "@/assets/icon/BlackLogo.png";
 
 const Header = () => {
   const [isLogIn, setIsLogIn] = useState(false);
@@ -23,7 +22,7 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
       <div className="flex items-center">
-        <img src="../public/icon/LogoBlack.png" alt="logo" className="h-8" />
+        <img src="../icon/LogoBlack.png" alt="logo" className="h-8" />
       </div>
 
       <nav className="flex items-center space-x-4">
@@ -32,7 +31,7 @@ const Header = () => {
             <Badge className="bg-green-200 text-green-800 px-2 py-1 rounded-full">
               잔여 캐시: {Cash}원
             </Badge>
-            <button>판매/등록</button>
+            <Button>판매/등록</Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger>마이페이지</DropdownMenuTrigger>
@@ -60,12 +59,12 @@ const Header = () => {
           <>
             <span>고객센터</span>
 
-            <button
+            <Button
               className="bg-blue-500 text-white px-4 py-2 rounded"
               onClick={() => setIsLogIn(true)}
             >
               로그인
-            </button>
+            </Button>
           </>
         )}
       </nav>
