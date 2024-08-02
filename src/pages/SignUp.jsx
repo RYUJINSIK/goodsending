@@ -33,6 +33,7 @@ function SignUp() {
     const requestBody = {
       email,
     };
+    // 이메일인증 버튼
     if (validateEmail(email)) {
       try {
         const EmailCode = await getEmailCode(requestBody);

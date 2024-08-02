@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Timer } from "lucide-react";
 
 const CountdownTimer = ({ isActive, callerComponent }) => {
   const [seconds, setSeconds] = useState(300); // 5분 = 300초
@@ -33,7 +34,12 @@ const CountdownTimer = ({ isActive, callerComponent }) => {
   };
 
   return callerComponent === "SignUp" ? (
-    <Button variant="outline" type="button" className="ml-2 w-1/3">
+    <Button
+      variant="outline"
+      type="button"
+      className="ml-2 w-1/3 cursor-default border-primary"
+    >
+      <Timer className="mr-2 h-4 w-4" />
       {formatTime(seconds)}
     </Button>
   ) : (
