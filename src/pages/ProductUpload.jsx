@@ -60,10 +60,9 @@ const ProductUpload = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-screen-md">
-      <h2 className="text-2xl font-bold mt-8 mb-2">판매 등록</h2>
-      <h3 className="text-base font-light mb-4">Sales Registration</h3>
+      <h2 className="text-2xl font-bold mt-8 mb-8">판매 등록</h2>
 
-      <Card>
+      <Card className="p-6">
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="mb-4">
@@ -125,22 +124,26 @@ const ProductUpload = () => {
               />
             </div>
 
-            <div className="mb-4">
-              <Label className="block text-xl font-medium text-left mb-1">
+            <div className="mb-4 flex items-center">
+              <Label className="block text-xl font-medium text-left mb-1 mr-2 w-1/2">
                 입찰 시작 금액
               </Label>
 
-              <Input
-                type="text"
-                value={formatPrice(price)}
-                onChange={handlePriceChange}
-                placeholder="가격을 입력해주세요"
-                required
-              />
+              <div className="flex items-center w-1/2">
+                <Input
+                  type="text"
+                  value={formatPrice(price)}
+                  onChange={handlePriceChange}
+                  placeholder="가격을 입력해주세요"
+                  className="text-right p-2"
+                  required
+                />
+                <span className="ml-2">원</span>
+              </div>
             </div>
 
-            <div className="mb-4">
-              <Label className="block text-xl font-medium text-left mb-1">
+            <div className="mb-4 flex items-center justify-between">
+              <Label className="block text-xl font-medium text-left mb-1 w-1/2">
                 경매 시작 날짜
               </Label>
 
@@ -150,30 +153,30 @@ const ProductUpload = () => {
                 minDate={new Date()}
                 maxDate={new Date(new Date().setDate(new Date().getDate() + 6))}
                 dateFormat="yyyy/MM/dd"
-                className="w-full mt-1 border rounded rounded-m p-2 block"
+                className="w-full mt-1 border rounded rounded-m p-2 block text-center"
               />
             </div>
 
-            <div className="mb-4">
-              <Label className="block text-xl font-medium text-left mb-1">
+            <div className="mb-4 flex items-center justify-between">
+              <Label className="block text-xl font-medium text-left mb-1 w-1/2">
                 경매 시간 설정
               </Label>
               <Select
                 value={auctionTime}
                 onValueChange={setAuctionTime}
-                className="z-50"
+                className="w-1/2"
               >
-                <SelectTrigger className="w-full mt-1">
+                <SelectTrigger className="w-1/2 mt-1">
                   <SelectValue placeholder="Select auction time" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="오전">오전</SelectItem>
                   <SelectItem value="오후">오후</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <Button type="submit" className="mt-4">
+            <Button type="submit" className="mt-4 z-0">
               등록하기
             </Button>
           </form>

@@ -38,9 +38,8 @@ const Header = () => {
             <DropdownMenu>
               <DropdownMenuTrigger>마이페이지</DropdownMenuTrigger>
 
-              <DropdownMenuContent>
+              <DropdownMenuContent className="bg-white">
                 <DropdownMenuItem>회원 정보 수정</DropdownMenuItem>
-                <DropdownMenuItem>쿠폰함</DropdownMenuItem>
                 <DropdownMenuItem>찜한 상품</DropdownMenuItem>
                 <DropdownMenuItem>캐시 충전</DropdownMenuItem>
                 <DropdownMenuItem>경매신청 내역</DropdownMenuItem>
