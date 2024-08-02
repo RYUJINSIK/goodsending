@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useState } from "react";
 
 import {
@@ -12,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 
-const Header = () => {
+const Header = ({ openLogin }) => {
   const [isLogIn, setIsLogIn] = useState(false);
 
   const [Cash, setCash] = useState(10000);
@@ -61,7 +59,8 @@ const Header = () => {
 
             <Button
               className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={() => setIsLogIn(true)}
+              // onClick={() => setIsLogIn(true)}
+              onClick={openLogin}
             >
               로그인
             </Button>

@@ -23,7 +23,11 @@ function SignUp() {
   const getCode = () => {
     // 이메일인증 버튼
     if (validateEmail(email)) {
+      // 이메일 정규식 통과하면 서버에 메일인증 요청
+      // 1. 이메일 중복이면 에러로 빠지기
+      // 2. 유효한 이메일이면 인증코드 입력칸 표시
       setShowCodeField(true);
+      setMailError("");
     } else {
       setMailError("메일주소가 잘못되었습니다.");
       setShowCodeField(false);
@@ -32,8 +36,8 @@ function SignUp() {
   const labelStyle = "flex w-full max-w-sm items-start pr-2 pb-2 pt-2 text-sm";
   const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary";
   return (
-    <div className="w-full">
-      <img src="../icon/LogoBlue.png" alt="logo" className="h-20" />
+    <div className="flex flex-col items-center w-full">
+      <img src="../icon/LogoBlue.png" alt="logo" className="h-20 mb-10" />
       <p className={labelStyle}>이메일</p>
       <div className="flex w-full max-w-sm items-center space-x-2 pb-2">
         <Input
@@ -77,7 +81,7 @@ function SignUp() {
       <Input type="password" placeholder="**********" />
       <p className={labelStyle}>비밀번호 확인</p>
       <Input type="password" placeholder="**********" />
-      {mailError && <p className={errorStyle}>{mailError}</p>}
+      {passwordError && <p className={errorStyle}>{passwordError}</p>}
       <div className="flex w-full max-w-sm items-center space-x-2 pt-3">
         <Button className="w-full">
           <KeyRound className="mr-2 h-4 w-4" /> 가입하기
