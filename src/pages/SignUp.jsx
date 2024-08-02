@@ -8,6 +8,8 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { KeyRound } from "lucide-react";
+import CountdownTimer from "@/components/CountdownTimer";
+import { getEmailCode } from "@/api/userApi";
 
 function SignUp() {
   const [email, setEmail] = useState(""); // 가입메일
@@ -15,24 +17,49 @@ function SignUp() {
   const [showCodeField, setShowCodeField] = useState(false); // 인증코드입력칸 제어
   const [mailError, setMailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [mailText, setMailText] = useState("인증번호 받기");
+  const [timerReset, setTimerReset] = useState(0); // 타이머 컴포넌트의 key로 사용
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
+  const vlidatePassword = (password) => {
+    const regex = /^[a-zA-Z0-9_!@#$%&'*+/=?`{|}~^.-]{8,15}$/;
+    return regex.test(password);
+  };
 
-  const getCode = () => {
-    // 이메일인증 버튼
+  const getCode = async () => {
+    const requestBody = {
+      email,
+    };
     if (validateEmail(email)) {
+      try {
+        const EmailCode = await getEmailCode(requestBody);
+        setMailText("인증번호 재요청");
+        setShowCodeField(true);
+        setMailError("");
+        setIsTimerActive(true); // 타이머 활성화
+        setTimerReset((prevKey) => prevKey + 1); // 타이머 key 증가
+        console.log(EmailCode);
+      } catch (error) {
+        // 에러 처리
+        console.log(error);
+      }
       // 이메일 정규식 통과하면 서버에 메일인증 요청
       // 1. 이메일 중복이면 에러로 빠지기
       // 2. 유효한 이메일이면 인증코드 입력칸 표시
-      setShowCodeField(true);
-      setMailError("");
     } else {
       setMailError("메일주소가 잘못되었습니다.");
       setShowCodeField(false);
     }
   };
+
+  const handleTimerComplete = () => {
+    setIsTimerActive(false);
+    // 여기에 인증 시간 만료 처리 로직 추가
+  };
+
   const labelStyle = "flex w-full max-w-sm items-start pr-2 pb-2 pt-2 text-sm";
   const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary";
   return (
@@ -46,8 +73,8 @@ function SignUp() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Button type="button" onClick={getCode}>
-          인증번호 받기
+        <Button type="button" onClick={getCode} className="w-1/3">
+          {mailText}
         </Button>
       </div>
       {mailError && <p className={errorStyle}>{mailError}</p>}
@@ -59,7 +86,6 @@ function SignUp() {
         }`}
       >
         <div className="flex  items-start">
-          <p className={labelStyle}>인증번호 입력</p>
           <InputOTP
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
@@ -75,6 +101,13 @@ function SignUp() {
               <InputOTPSlot index={5} />
             </InputOTPGroup>
           </InputOTP>
+          {isTimerActive && (
+            <CountdownTimer
+              key={timerReset}
+              isActive={isTimerActive}
+              callerComponent="SignUp" // 이 부분을 추가
+            />
+          )}
         </div>
       </div>
       <p className={labelStyle}>비밀번호</p>

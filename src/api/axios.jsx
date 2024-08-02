@@ -1,10 +1,11 @@
 import axios from "axios";
 
 const instance = axios.create({
-  // baseURL: import.meta.env.VITE_API_URL, // API 통신할 URL 환경변수로 관리
+  baseURL: import.meta.env.VITE_API_URL, // API 통신할 URL 환경변수로 관리
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // 요청 인터셉터

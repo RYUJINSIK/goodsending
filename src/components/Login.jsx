@@ -4,13 +4,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getUserData } from "@/api/userApi";
 
 function Login({ isOpen, onClose }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // 가입메일
+  const [password, setPassword] = useState(""); // 가입메일
   const goToSignUp = () => {
     navigate("/signup");
     onClose();
+  };
+
+  const submitLogin = async () => {
+    const requestBody = {
+      email,
+      password,
+    };
+    try {
+      const userData = await getUserData(requestBody);
+      console.log(userData);
+      // setUser(userData);
+    } catch (error) {
+      // 에러 처리
+      console.log(error);
+    }
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -25,8 +42,13 @@ function Login({ isOpen, onClose }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <Input type="password" placeholder="비밀번호" />
-        <Button className="bg-primary w-full">
+        <Input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button className="bg-primary w-full" onClick={submitLogin}>
           <LogIn className="mr-2 h-4 w-4" />
           로그인
         </Button>
