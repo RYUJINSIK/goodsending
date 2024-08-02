@@ -1,13 +1,19 @@
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Header from "./components/Header";
 import "./App.css";
 import Main from "./pages/Main";
+import ProductUpload from "./pages/ProductUpload";
 
 function App() {
   return (
-    <div>
+    <Router>
       <Header />
-      <Main />
+      <Routes>
+        <Route path="/" exact element={<Main />} />
+        <Route path="/product-upload" element={<ProductUpload />} />
+      </Routes>
       <Button className="bg-primary text-white hover:bg-primary-dark">
         Primary Button
       </Button>
@@ -15,8 +21,7 @@ function App() {
         Secondary Button
       </Button>
       <Button variant="default">Primary Button</Button>
-      <Button variant="outline">Primary Button</Button>
-    </div>
+    </Router>
   );
 }
 
