@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
@@ -9,13 +9,17 @@ import {
 } from "@/components/ui/input-otp";
 import { KeyRound } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
-import { getEmailCode } from "@/api/userApi";
+import { getEmailCode, codeCheck, signup } from "@/api/userApi";
 
 function SignUp() {
   const [email, setEmail] = useState(""); // 가입메일
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [code, setCode] = useState(""); // 인증코드
+  const [isCorrect, setIsCorrect] = useState(false);
   const [showCodeField, setShowCodeField] = useState(false); // 인증코드입력칸 제어
   const [mailError, setMailError] = useState("");
+  const [codeText, setCodeText] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [mailText, setMailText] = useState("인증번호 받기");
@@ -24,7 +28,7 @@ function SignUp() {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
-  const vlidatePassword = (password) => {
+  const validatePassword = (password) => {
     const regex = /^[a-zA-Z0-9_!@#$%&'*+/=?`{|}~^.-]{8,15}$/;
     return regex.test(password);
   };
@@ -44,25 +48,80 @@ function SignUp() {
         setTimerReset((prevKey) => prevKey + 1); // 타이머 key 증가
         console.log(EmailCode);
       } catch (error) {
-        // 에러 처리
+        if (error.request.status === 409) {
+          setMailError("해당 메일로 가입된 계정이 존재합니다.");
+          setShowCodeField(false);
+        }
+        if (error.request.status === 400) {
+          setMailError("메일 형식이 잘못되었습니다.");
+          setShowCodeField(false);
+        }
         console.log(error);
       }
       // 이메일 정규식 통과하면 서버에 메일인증 요청
       // 1. 이메일 중복이면 에러로 빠지기
       // 2. 유효한 이메일이면 인증코드 입력칸 표시
     } else {
-      setMailError("메일주소가 잘못되었습니다.");
+      setMailError("메일 형식이 잘못되었습니다.");
       setShowCodeField(false);
     }
   };
 
-  const handleTimerComplete = () => {
-    setIsTimerActive(false);
-    // 여기에 인증 시간 만료 처리 로직 추가
+  useEffect(() => {
+    if (code.length === 6) callCodeCheck();
+  }, [code]);
+
+  useEffect(() => {
+    if (password !== confirmPassword)
+      setPasswordError("비밀번호가 일치하지 않습니다.");
+    if (password === confirmPassword) setPasswordError("");
+  }, [confirmPassword]);
+
+  const callCodeCheck = async () => {
+    try {
+      const check = await codeCheck(email, code);
+      if (check === "인증코드 일치") {
+        setCodeText("☑️ 인증번호가 일치합니다.");
+        setIsCorrect(true);
+      }
+    } catch (error) {
+      if (error.request.status === 400) {
+        setCodeText("⚠️ 인증번호가 일치하지 않습니다.");
+        setIsCorrect(false);
+      } else {
+        console.log(error);
+      }
+    }
+  };
+
+  const confirmSignup = async () => {
+    const requestBody = {
+      email,
+      password,
+      confirmPassword,
+      code,
+    };
+    if (
+      validateEmail(email) &&
+      validatePassword(password) &&
+      isCorrect &&
+      password === confirmPassword
+    ) {
+      try {
+        const submit = await signup(requestBody);
+        console.log(submit);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      if (!validatePassword(password)) {
+        setPasswordError("비밀번호 규칙을 지켜주세요");
+      }
+    }
   };
 
   const labelStyle = "flex w-full max-w-sm items-start pr-2 pb-2 pt-2 text-sm";
-  const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary";
+  const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary	";
   return (
     <div className="flex flex-col items-center w-full">
       <img src="../icon/LogoBlue.png" alt="logo" className="h-20 mb-10" />
@@ -110,14 +169,36 @@ function SignUp() {
             />
           )}
         </div>
+
+        {codeText && <p className={errorStyle}>{codeText}</p>}
       </div>
       <p className={labelStyle}>비밀번호</p>
-      <Input type="password" placeholder="**********" />
+      <Input
+        type="password"
+        placeholder="**********"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <p className="flex w-full max-w-sm items-start pt-3 pb-3 text-sm underline decoration-primary decoration-wavy decoration-2 underline-offset-4">
+        비밀번호 규칙
+      </p>
+      <p className="flex w-full max-w-sm items-start text-sm">
+        1. 비밀번호는 <strong> 8자 이상 15자 이하 </strong> 로 설정해야 합니다.
+      </p>
+      <p className="flex w-full max-w-sm items-start pb-3 text-sm">
+        2. <strong>영문, 숫자, 특수문자</strong>만 사용할 수 있습니다.
+      </p>
       <p className={labelStyle}>비밀번호 확인</p>
-      <Input type="password" placeholder="**********" />
+      <Input
+        type="password"
+        placeholder="**********"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
       {passwordError && <p className={errorStyle}>{passwordError}</p>}
       <div className="flex w-full max-w-sm items-center space-x-2 pt-3">
-        <Button className="w-full">
+        <Button className="w-full" onClick={confirmSignup}>
           <KeyRound className="mr-2 h-4 w-4" /> 가입하기
         </Button>
       </div>
