@@ -13,22 +13,23 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ImageUpload from "./ImageUpload";
+import { productUpload } from "@/api/productApi";
 
 const ProductUploadForm = () => {
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
+  const [introduction, setIntroduction] = useState("");
   const [price, setPrice] = useState("");
   const [startDate, setStartDate] = useState(new Date());
-  const [auctionTime, setAuctionTime] = useState("오전");
+  const [auctionTime, setAuctionTime] = useState("BREAKFAST");
 
   // 이미지 변경 핸들러
   const handleImageChange = (index, e) => {
     const file = e.target.files[0];
     if (file) {
       const newImages = [...images];
-      newImages[index] = URL.createObjectURL(file);
+      newImages[index] = file; // URL이 아닌 파일 객체를 받아야겠지?
       setImages(newImages);
     }
   };
@@ -39,7 +40,7 @@ const ProductUploadForm = () => {
     setPrice(value);
   };
 
-  // 가격 포맷팅 함수
+  // 가격 포맷팅
   const formatPrice = (value) => {
     const numberValue = parseInt(value, 10);
     return isNaN(numberValue)
@@ -48,9 +49,34 @@ const ProductUploadForm = () => {
   };
 
   // 폼 제출 핸들러
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ images, title, description, price, startDate, auctionTime });
+
+    // console.log({ images, title, description, price, startDate, auctionTime });
+
+    const formData = new FormData();
+    images.forEach((image, index) => {
+      if (image) {
+        fetch(image);
+        // .then((res) => res.blob())
+        // .then((blob) => {
+        formData.append(`image${index}`, image);
+      }
+    });
+    formData.append("name", name); // 제품 제목 추가
+    formData.append("introduction", introduction); // 제품 설명 추가
+    formData.append("price", price); // 제품 가격 추가
+    formData.append("startDate", startDate); // 경매 시작 날짜 추가
+    formData.append("auctionTime", auctionTime); // 경매 시간 추가
+
+    try {
+      const response = await productUpload();
+      console.log("Upload successful:", response.data); // 성공 시 응답 데이터 로그 출력
+      // 성공 처리 로직 추가 (예: 성공 메시지 표시 또는 페이지 리다이렉트)
+    } catch (error) {
+      console.error("Upload failed:", error); // 실패 시 에러 로그 출력
+      // 오류 처리 로직 추가 (예: 오류 메시지 표시)
+    }
   };
 
   return (
@@ -81,8 +107,8 @@ const ProductUploadForm = () => {
             </Label>
             <Input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="제품명을 입력하세요"
               required
             />
@@ -95,8 +121,8 @@ const ProductUploadForm = () => {
             </Label>
             <textarea
               className="w-full mt-1 p-2 border rounded-md"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={introduction}
+              onChange={(e) => setIntroduction(e.target.value)}
               placeholder="제품에 대한 설명을 입력하세요"
               required
             />
@@ -149,8 +175,8 @@ const ProductUploadForm = () => {
                 <SelectValue placeholder="Select auction time" />
               </SelectTrigger>
               <SelectContent className="bg-white">
-                <SelectItem value="오전">오전</SelectItem>
-                <SelectItem value="오후">오후</SelectItem>
+                <SelectItem value="BREAKFAST">오전</SelectItem>
+                <SelectItem value="AFTERNOON">오후</SelectItem>
               </SelectContent>
             </Select>
           </div>
