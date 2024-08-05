@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
@@ -31,11 +31,9 @@ function Login({ isOpen, onClose }) {
   };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogTitle />
       <DialogContent className="bg-white w-1/4 flex flex-col items-center">
-        {/* Add your login form here */}
-
         <img src="../icon/LogoBlue.png" alt="logo" className="h-14 mb-5" />
-
         <Input
           type="text"
           placeholder="이메일"

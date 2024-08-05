@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
@@ -10,6 +10,8 @@ import {
 import { KeyRound } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
 import { getEmailCode, codeCheck, signup } from "@/api/userApi";
+import JSConfetti from "js-confetti";
+import Welcome from "@/components/Welcome";
 
 function SignUp() {
   const [email, setEmail] = useState(""); // 가입메일
@@ -24,6 +26,7 @@ function SignUp() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [mailText, setMailText] = useState("인증번호 받기");
   const [timerReset, setTimerReset] = useState(0); // 타이머 컴포넌트의 key로 사용
+
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
@@ -37,7 +40,6 @@ function SignUp() {
     const requestBody = {
       email,
     };
-    // 이메일인증 버튼
     if (validateEmail(email)) {
       try {
         const EmailCode = await getEmailCode(requestBody);
@@ -58,9 +60,6 @@ function SignUp() {
         }
         console.log(error);
       }
-      // 이메일 정규식 통과하면 서버에 메일인증 요청
-      // 1. 이메일 중복이면 에러로 빠지기
-      // 2. 유효한 이메일이면 인증코드 입력칸 표시
     } else {
       setMailError("메일 형식이 잘못되었습니다.");
       setShowCodeField(false);
@@ -110,6 +109,9 @@ function SignUp() {
       try {
         const submit = await signup(requestBody);
         console.log(submit);
+        if (submit === "가입 완료") {
+          callWelcome();
+        }
       } catch (error) {
         console.log(error);
       }
@@ -118,6 +120,30 @@ function SignUp() {
         setPasswordError("비밀번호 규칙을 지켜주세요");
       }
     }
+  };
+
+  //Welcome 모달 컨트롤용
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
+  const openWelcome = () => setIsWelcomeOpen(true);
+  const closeWelcome = () => setIsWelcomeOpen(false);
+  const jsConfettiRef = useRef(null);
+
+  useEffect(() => {
+    jsConfettiRef.current = new JSConfetti();
+  }, []);
+  const callWelcome = () => {
+    openWelcome();
+    jsConfettiRef.current.addConfetti({
+      confettiColors: [
+        "#dbeafe",
+        "#bfdbfe",
+        "#93c5fd",
+        "#5AB2FF",
+        "#60a5fa",
+        "#2563eb",
+      ],
+      confettiNumber: 700,
+    });
   };
 
   const labelStyle = "flex w-full max-w-sm items-start pr-2 pb-2 pt-2 text-sm";
@@ -202,6 +228,10 @@ function SignUp() {
           <KeyRound className="mr-2 h-4 w-4" /> 가입하기
         </Button>
       </div>
+      <Button className="mt-5" onClick={callWelcome}>
+        test
+      </Button>
+      <Welcome isOpen={isWelcomeOpen} onClose={closeWelcome} />
     </div>
   );
 }
