@@ -22,6 +22,10 @@ const Header = ({ openLogin }) => {
     dispatch(clearToken());
   };
 
+  const handleUploadClick = () => {
+    navigate("/product-upload");
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
       <div className="flex items-center">
@@ -34,22 +38,16 @@ const Header = ({ openLogin }) => {
             <Badge className="bg-green-200 text-green-800 px-2 py-1 rounded-full">
               잔여 캐시: {user.cash === null ? 0 : user.cash}원
             </Badge>
-            <Button>판매/등록</Button>
+            <button onClick={handleUploadClick}>판매/등록</button>
 
             <DropdownMenu>
               <DropdownMenuTrigger>마이페이지</DropdownMenuTrigger>
 
-              <DropdownMenuContent>
+              <DropdownMenuContent className="bg-white">
                 <DropdownMenuItem>회원 정보 수정</DropdownMenuItem>
-
-                <DropdownMenuItem>쿠폰함</DropdownMenuItem>
-
                 <DropdownMenuItem>찜한 상품</DropdownMenuItem>
-
                 <DropdownMenuItem>캐시 충전</DropdownMenuItem>
-
                 <DropdownMenuItem>경매신청 내역</DropdownMenuItem>
-
                 <DropdownMenuItem>경매판매 내역</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
