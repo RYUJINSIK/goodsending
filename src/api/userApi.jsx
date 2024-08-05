@@ -2,19 +2,30 @@
 
 import axios from "./axios";
 
-export const getUserData = async (requestBody) => {
+export const getLoginToken = async (requestBody) => {
   try {
     const response = await axios.post(`/api/members/login`, requestBody);
-    console.log(response);
-    return response.data;
+    return response.headers.authorization;
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;
   }
 };
 
-export const updateUserInfo = (userId, data) => {
-  return axios.put(`/users/${userId}`, data);
+export const getUserInfo = (token) => {
+  console.log(token);
+  try {
+    const response = axios.get(`/api/members/info`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.log("ERROR");
+    throw error;
+  }
 };
 
 // 회원가입시 메일로 인증코드받는 API

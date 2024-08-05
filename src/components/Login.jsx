@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getUserData } from "@/api/userApi";
+import { getLoginToken, getUserInfo } from "@/api/userApi";
+import { useDispatch } from "react-redux";
+import { setToken, setUserData } from "@/redux/modules/auth";
 
 function Login({ isOpen, onClose }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // 가입메일
   const [password, setPassword] = useState(""); // 가입메일
@@ -21,11 +24,22 @@ function Login({ isOpen, onClose }) {
       password,
     };
     try {
-      const userData = await getUserData(requestBody);
-      console.log(userData);
-      // setUser(userData);
+      const token = await getLoginToken(requestBody);
+      dispatch(setToken(token));
+      callUserInfo(token);
+      onClose();
     } catch (error) {
       // 에러 처리
+      console.log(error);
+    }
+  };
+
+  const callUserInfo = async (token) => {
+    try {
+      const userData = await getUserInfo(token);
+      console.log(userData.data);
+      dispatch(setUserData(userData.data));
+    } catch (error) {
       console.log(error);
     }
   };

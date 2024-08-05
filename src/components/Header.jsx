@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { clearToken } from "@/redux/modules/auth";
 
 import {
   DropdownMenu,
@@ -11,11 +13,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 
 const Header = ({ openLogin }) => {
-  const [isLogIn, setIsLogIn] = useState(false);
+  const dispatch = useDispatch();
 
-  const [Cash, setCash] = useState(10000);
+  const user = useSelector((state) => state.auth.userData);
+  console.log("user ? : ", user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const userName = "사용자 이름";
+  const handleLogout = () => {
+    dispatch(clearToken());
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
@@ -24,10 +30,10 @@ const Header = ({ openLogin }) => {
       </div>
 
       <nav className="flex items-center space-x-4">
-        {isLogIn ? (
+        {isAuthenticated ? (
           <>
             <Badge className="bg-green-200 text-green-800 px-2 py-1 rounded-full">
-              잔여 캐시: {Cash}원
+              잔여 캐시: {user.cash === null ? 0 : user.cash}원
             </Badge>
             <Button>판매/등록</Button>
 
@@ -48,10 +54,10 @@ const Header = ({ openLogin }) => {
                 <DropdownMenuItem>경매판매 내역</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
+            <Button onClick={handleLogout}>로그아웃</Button>
             <span>고객센터</span>
 
-            <span>{userName}</span>
+            <span>{user.email}</span>
           </>
         ) : (
           <>

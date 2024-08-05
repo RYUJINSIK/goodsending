@@ -228,9 +228,6 @@ function SignUp() {
           <KeyRound className="mr-2 h-4 w-4" /> 가입하기
         </Button>
       </div>
-      <Button className="mt-5" onClick={callWelcome}>
-        test
-      </Button>
       <Welcome isOpen={isWelcomeOpen} onClose={closeWelcome} />
     </div>
   );
