@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -9,8 +8,19 @@ import {
 } from "@/components/ui/carousel";
 
 import { Card, CardContent } from "@/components/ui/card";
+import Login from "@/components/Login";
 
 const Main = () => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const openLogin = () => setIsLoginOpen(true);
+  const closeLogin = () => setIsLoginOpen(false);
+  useEffect(() => {
+    const shouldLoginModal = localStorage.getItem("showLoginModal");
+    if (shouldLoginModal === "true") {
+      openLogin();
+      localStorage.removeItem("showLoginModal"); // 모달을 한 번만 표시하기 위해 삭제
+    }
+  }, []);
   const images = [
     "https://media.istockphoto.com/id/175194979/ko/사진/커요-늘이다.jpg?s=1024x1024&w=is&k=20&c=ytEWnY4uZNI7BXRdwSJiWAVD0hGz9u6CNB0zg0PsYPQ=",
     "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",
@@ -99,6 +109,7 @@ const Main = () => {
           />
         ))}
       </div>
+      <Login isOpen={isLoginOpen} onClose={closeLogin} />
     </div>
   );
 };

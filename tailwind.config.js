@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#3490dc",
+          DEFAULT: "#40A6FD",
           light: "#6cb2eb",
           dark: "#2779bd",
         },
@@ -16,6 +16,15 @@ module.exports = {
           dark: "#e3ac00",
         },
         // 추가 색상 정의
+      },
+      keyframes: {
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+      },
+      animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
     },
   },

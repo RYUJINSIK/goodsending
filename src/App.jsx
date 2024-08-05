@@ -1,27 +1,28 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useLocation, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import "./App.css";
 import Main from "./pages/Main";
-import ProductUpload from "./pages/ProductUpload";
+import SignUp from "./pages/SignUp";
+import Login from "./components/Login";
 
 function App() {
+  const location = useLocation();
+  const hideHeaderPaths = ["/signup"];
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const openLogin = () => setIsLoginOpen(true);
+  const closeLogin = () => setIsLoginOpen(false);
   return (
-    <Router>
-      <Header />
+    <div>
+      {!hideHeaderPaths.includes(location.pathname) && (
+        <Header openLogin={openLogin} />
+      )}
+      <Login isOpen={isLoginOpen} onClose={closeLogin} />
       <Routes>
-        <Route path="/" exact element={<Main />} />
-        <Route path="/product-upload" element={<ProductUpload />} />
+        <Route path="signup" element={<SignUp />} />
+        <Route path="/" element={<Main />} />
       </Routes>
-      <Button className="bg-primary text-white hover:bg-primary-dark">
-        Primary Button
-      </Button>
-      <Button className="bg-secondary text-black hover:bg-secondary-dark">
-        Secondary Button
-      </Button>
-      <Button variant="default">Primary Button</Button>
-    </Router>
+    </div>
   );
 }
 
