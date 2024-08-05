@@ -78,17 +78,16 @@ function SignUp() {
   const callCodeCheck = async () => {
     try {
       const check = await codeCheck(email, code);
-      if (check === "인증코드 일치") {
+      console.log(check);
+      if (check) {
         setCodeText("☑️ 인증번호가 일치합니다.");
         setIsCorrect(true);
-      }
-    } catch (error) {
-      if (error.request.status === 400) {
+      } else {
         setCodeText("⚠️ 인증번호가 일치하지 않습니다.");
         setIsCorrect(false);
-      } else {
-        console.log(error);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
