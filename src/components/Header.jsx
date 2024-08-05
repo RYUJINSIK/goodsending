@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { clearToken } from "@/redux/modules/auth";
 
 import {
@@ -13,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 
 const Header = ({ openLogin }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.userData);
