@@ -48,7 +48,6 @@ function SignUp() {
         setMailError("");
         setIsTimerActive(true); // 타이머 활성화
         setTimerReset((prevKey) => prevKey + 1); // 타이머 key 증가
-        console.log(EmailCode);
       } catch (error) {
         if (error.request.status === 409) {
           setMailError("해당 메일로 가입된 계정이 존재합니다.");
@@ -108,7 +107,6 @@ function SignUp() {
     ) {
       try {
         const submit = await signup(requestBody);
-        console.log(submit);
         if (submit === "가입 완료") {
           callWelcome();
         }

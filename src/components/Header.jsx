@@ -16,7 +16,6 @@ const Header = ({ openLogin }) => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.userData);
-  console.log("user ? : ", user);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogout = () => {

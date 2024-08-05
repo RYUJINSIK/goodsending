@@ -13,14 +13,12 @@ export const getLoginToken = async (requestBody) => {
 };
 
 export const getUserInfo = (token) => {
-  console.log(token);
   try {
     const response = axios.get(`/api/members/info`, {
       headers: {
         Authorization: token,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.log("ERROR");
