@@ -1,21 +1,27 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useLocation, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import "./App.css";
 import Main from "./pages/Main";
+import SignUp from "./pages/SignUp";
+import Login from "./components/Login";
 
 function App() {
+  const location = useLocation();
+  const hideHeaderPaths = ["/signup"];
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const openLogin = () => setIsLoginOpen(true);
+  const closeLogin = () => setIsLoginOpen(false);
   return (
     <div>
-      <Header />
-      <Main />
-      <Button className="bg-primary text-white hover:bg-primary-dark">
-        Primary Button
-      </Button>
-      <Button className="bg-secondary text-black hover:bg-secondary-dark">
-        Secondary Button
-      </Button>
-      <Button variant="default">Primary Button</Button>
-      <Button variant="outline">Primary Button</Button>
+      {!hideHeaderPaths.includes(location.pathname) && (
+        <Header openLogin={openLogin} />
+      )}
+      <Login isOpen={isLoginOpen} onClose={closeLogin} />
+      <Routes>
+        <Route path="signup" element={<SignUp />} />
+        <Route path="/" element={<Main />} />
+      </Routes>
     </div>
   );
 }
