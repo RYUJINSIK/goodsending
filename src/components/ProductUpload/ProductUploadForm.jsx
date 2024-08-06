@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,16 +21,35 @@ const ProductUploadForm = () => {
   const token = useSelector((state) => state.auth.token);
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
+  const [totalFileSize, setTotalFileSize] = useState(0);
   const [name, setName] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [price, setPrice] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setDate(new Date().getDate() + 1))
+  );
   const [auctionTime, setAuctionTime] = useState("AFTERNOON");
+  const navigate = useNavigate();
 
   // 이미지 변경 핸들러
   const handleImageChange = (index, e) => {
     const file = e.target.files[0];
     if (file) {
+      // 파일 크기 제한
+      const maxSize = 10 * 1024 * 1024;
+      const maxTotalSize = 50 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+        alert("파일 크기는 10MB를 초과할 수 없습니다.");
+        return;
+      }
+      const newTotalSize =
+        totalFileSize - (images[index]?.size || 0) + file.size;
+      if (newTotalSize > maxTotalSize) {
+        alert("전체 파일 크기가 50MB를 초과할 수 없습니다.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const newImages = [...images];
@@ -42,6 +62,7 @@ const ProductUploadForm = () => {
           lastModified: file.lastModified,
         };
         setImages(newImages);
+        setTotalFileSize(newTotalSize);
       };
       reader.readAsDataURL(file);
     }
@@ -90,6 +111,7 @@ const ProductUploadForm = () => {
     try {
       const response = await productUpload(token, formData);
       console.log("Upload successful:", response.data);
+      navigate("/");
     } catch (error) {
       console.error("Upload failed:", error);
     }
@@ -170,8 +192,8 @@ const ProductUploadForm = () => {
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
-              minDate={new Date()}
-              maxDate={new Date(new Date().setDate(new Date().getDate() + 6))}
+              minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+              maxDate={new Date(new Date().setDate(new Date().getDate() + 7))}
               dateFormat="yyyy/MM/dd"
               className="w-full mt-1 border rounded rounded-m p-2 block text-center"
             />
