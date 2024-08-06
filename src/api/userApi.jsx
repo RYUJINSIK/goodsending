@@ -1,5 +1,3 @@
-// axios 모듈 사용예시
-
 import axios from "./axios";
 
 export const getLoginToken = async (requestBody) => {

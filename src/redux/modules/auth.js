@@ -13,7 +13,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setToken: (state, action) => {
-      state.token = action.payload.token;
+      state.token = action.payload;
       // state.user = action.payload.user; // 사용자 정보 저장
       state.isAuthenticated = true;
     },

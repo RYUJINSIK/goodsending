@@ -12,10 +12,9 @@ const ImageUpload = ({ index, image, onChange }) => {
           onChange={(e) => onChange(index, e)}
           className="absolute inset-0 opacity-0 cursor-pointer"
         />
-
         {image ? (
           <img
-            src={image}
+            src={image.preview}
             alt={`업로드된 이미지 ${index + 1}`}
             className="w-full h-full object-cover rounded"
           />
