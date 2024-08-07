@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/popover";
 import { useSelector } from "react-redux";
 
-export function BiddingModal({ callPostBids }) {
+export function Bidding({ callPostBids }) {
   const [currentHighPrice, setCurrentHighPrice] = useState(0);
   const [cash, setCash] = useState(0);
   const [bidPrice, setBidPrice] = useState(0);
@@ -95,4 +95,4 @@ export function BiddingModal({ callPostBids }) {
   );
 }
 
-export default BiddingModal;
+export default Bidding;

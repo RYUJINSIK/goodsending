@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { productDetails, postBids } from "@/api/productApi";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import BiddingModal from "@/components/BiddingModal";
+import Bidding from "@/components/Bidding";
 import { Client } from "@stomp/stompjs";
 
 function ProductsDetail() {
@@ -115,7 +115,7 @@ function ProductsDetail() {
           <p>{productInfo.introduction}</p>
         </div>
       )}
-      <BiddingModal callPostBids={callPostBids} />
+      <Bidding callPostBids={callPostBids} />
       <div>
         <h3>Bidder Count Messages:</h3>
         <ul>

@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./components/Login";
 import ProductUpload from "./pages/ProductUpload";
 import ProductsDetail from "./pages/ProductsDetail";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   const location = useLocation();
@@ -23,8 +24,11 @@ function App() {
       <Routes>
         <Route path="signup" element={<SignUp />} />
         <Route path="/" element={<Main />} />
-        <Route path="/product-upload" element={<ProductUpload />} />
-        <Route path="/product/:id" element={<ProductsDetail />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/product-upload" element={<ProductUpload />} />
+          <Route path="/product/:id" element={<ProductsDetail />} />
+          <Route path="/product" element={<ProductsDetail />} />
+        </Route>
       </Routes>
     </div>
   );
