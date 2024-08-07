@@ -6,6 +6,7 @@ import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
 import Login from "./components/Login";
 import ProductUpload from "./pages/ProductUpload";
+import ProductsDetail from "./pages/ProductsDetail";
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function App() {
         <Route path="signup" element={<SignUp />} />
         <Route path="/" element={<Main />} />
         <Route path="/product-upload" element={<ProductUpload />} />
+        <Route path="/product/:id" element={<ProductsDetail />} />
       </Routes>
     </div>
   );

@@ -13,6 +13,8 @@ function Login({ isOpen, onClose }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // 가입메일
   const [password, setPassword] = useState(""); // 가입메일
+  const [loginError, setLoginError] = useState(""); // 로그인에러 라벨
+  const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary	";
   const goToSignUp = () => {
     navigate("/signup");
     onClose();
@@ -28,9 +30,11 @@ function Login({ isOpen, onClose }) {
       dispatch(setToken(token));
       callUserInfo(token);
       onClose();
+      resetState();
     } catch (error) {
-      // 에러 처리
-      console.log(error);
+      if (error.request.status === 401) {
+        setLoginError("이메일 또는 비밀번호가 잘못 되었습니다.");
+      }
     }
   };
 
@@ -42,6 +46,19 @@ function Login({ isOpen, onClose }) {
       console.log(error);
     }
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      submitLogin();
+    }
+  };
+
+  const resetState = () => {
+    setEmail("");
+    setPassword("");
+    setLoginError("");
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTitle />
@@ -52,13 +69,16 @@ function Login({ isOpen, onClose }) {
           placeholder="이메일"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onKeyPress={handleKeyDown}
         />
         <Input
           type="password"
           placeholder="비밀번호"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={handleKeyDown}
         />
+        {loginError && <p className={errorStyle}>{loginError}</p>}
         <Button className="bg-primary w-full" onClick={submitLogin}>
           <LogIn className="mr-2 h-4 w-4" />
           로그인
