@@ -24,14 +24,27 @@ const Header = ({ openLogin }) => {
     dispatch(clearToken());
   };
 
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   const handleUploadClick = () => {
     navigate("/product-upload");
+  };
+
+  const handleMypageClick = () => {
+    navigate("/mypage");
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
       <div className="flex items-center">
-        <img src="../icon/LogoBlack.png" alt="logo" className="h-8" />
+        <img
+          src="../icon/LogoBlack.png"
+          alt="logo"
+          className="h-8 cursor-pointer"
+          onClick={handleLogoClick}
+        />
       </div>
 
       <nav className="flex items-center space-x-4">
@@ -43,10 +56,14 @@ const Header = ({ openLogin }) => {
             <button onClick={handleUploadClick}>판매/등록</button>
 
             <DropdownMenu>
-              <DropdownMenuTrigger>마이페이지</DropdownMenuTrigger>
+              <DropdownMenuTrigger onClick={handleMypageClick}>
+                마이페이지
+              </DropdownMenuTrigger>
 
               <DropdownMenuContent className="bg-white">
-                <DropdownMenuItem>회원 정보 수정</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleMypageClick}>
+                  회원 정보 수정
+                </DropdownMenuItem>
                 <DropdownMenuItem>찜한 상품</DropdownMenuItem>
                 <DropdownMenuItem>캐시 충전</DropdownMenuItem>
                 <DropdownMenuItem>경매신청 내역</DropdownMenuItem>
