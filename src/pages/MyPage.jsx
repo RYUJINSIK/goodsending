@@ -1,31 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-
-const UserInfo = ({ user }) => (
-  <Card className="p-5 mb-5 min-w-[320px] bg-white">
-    <h3 className="text-lg font-bold mb-4">{user.email} 회원님</h3>
-    <div className="flex justify-between">
-      <div>
-        <p className="text-sm text-gray-500 text-center">포인트</p>
-        <div className="flex justify-between">
-          <p className="font-bold">0</p>
-          <p className="font-bold">원</p>
-        </div>
-      </div>
-      <div>
-        <p className="text-sm text-gray-500">캐시</p>
-        <div className="flex justify-between">
-          <p className="font-bold">{user.cash || 0}</p>
-          <p className="font-bold">원</p>
-        </div>
-      </div>
-    </div>
-    <Button className="w-full mt-4">캐시 충전</Button>
-  </Card>
-);
+import UserInfo from "@/components/MyPage/UserInfo";
 
 const WishlistItem = ({ item }) => (
   <div className="flex items-center border-b py-4">
@@ -52,24 +30,39 @@ const WishlistItem = ({ item }) => (
 );
 
 const ContentArea = ({ tabValue, wishlistItems }) => (
-  <Card className="min-w-[650px] p-5 h-full min-h-[600px] bg-white">
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold mb-4">{tabValue}</h2>
-      <p className="text-sm text-gray-500 mb-4">
-        찜한 상품은 최대 200개까지 저장됩니다.
-      </p>
-    </div>
-    <hr className="border-gray-300 mb-4" />
+  // <Card className="min-w-[650px] p-5 h-full min-h-[600px] max-h-[calc(90vh-100px)] overflow-y-auto bg-white">
+  //   <div className="flex justify-between items-center mb-4">
+  //     <h2 className="text-2xl font-bold mb-4">{tabValue}</h2>
+  //   </div>
+  //   <hr className="border-gray-300 mb-5" />
+  //   {tabValue === "찜한 상품" && (
+  //     <div>
+  //       <p className="font-bold mb-4">전체 {wishlistItems.length}개</p>
+  //       {wishlistItems.map((item, index) => (
+  //         <WishlistItem key={index} item={item} />
+  //       ))}
+  //     </div>
+  //   )}
+  // </Card>
 
-    {tabValue === "찜한 상품" && (
-      <div>
+  <Card className="min-w-[650px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
+    <div className="sticky top-0 bg-white z-10 pt-6 px-5">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold mb-4">{tabValue}</h2>
         <p className="font-bold mb-4">전체 {wishlistItems.length}개</p>
-        {wishlistItems.map((item, index) => (
-          <WishlistItem key={index} item={item} />
-        ))}
       </div>
-    )}
-    {/* 탭 내용 추가 */}
+      <hr className="border-gray-300 mb-2" />
+    </div>
+    <div className="pl-5 overflow-y-auto h-[calc(80vh-70px)]">
+      {tabValue === "찜한 상품" && (
+        <div>
+          {wishlistItems.map((item, index) => (
+            <WishlistItem key={index} item={item} />
+          ))}
+        </div>
+      )}
+      {/* 탭 내용 추가 */}
+    </div>
   </Card>
 );
 
