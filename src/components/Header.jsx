@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearToken } from "@/redux/modules/auth";
@@ -18,6 +18,7 @@ const Header = ({ openLogin }) => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.userData);
+  const token = useSelector((state) => state.auth.access_token);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogout = () => {
@@ -27,6 +28,10 @@ const Header = ({ openLogin }) => {
   const handleUploadClick = () => {
     navigate("/product-upload");
   };
+
+  useEffect(() => {
+    console.log("token ? : ", token);
+  }, [token]);
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">

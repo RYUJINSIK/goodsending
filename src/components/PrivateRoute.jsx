@@ -11,15 +11,13 @@ function PrivateRoute() {
 
   const handleCloseModal = () => {
     setShowWarning(false);
-    navigate(-1);
+    navigate("/");
   };
 
   if (!isAuthenticated && !showWarning) {
     setShowWarning(true);
   }
 
-  console.log("HI???");
-  console.log(isAuthenticated);
   return (
     <>
       {isAuthenticated ? (

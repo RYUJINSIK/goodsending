@@ -3,7 +3,8 @@ import axios from "./axios";
 export const getLoginToken = async (requestBody) => {
   try {
     const response = await axios.post(`/api/members/login`, requestBody);
-    return response.headers.authorization;
+    console.log("Login : ", response);
+    return response.headers.access_token;
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;
@@ -14,7 +15,7 @@ export const getUserInfo = (token) => {
   try {
     const response = axios.get(`/api/members/info`, {
       headers: {
-        Authorization: token,
+        Access_Token: `Bearer ${token}`,
       },
     });
     return response;

@@ -1,38 +1,6 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
-}
-
-.embla-thumbs {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.embla-thumbs__container {
-  display: flex;
-  gap: 10px;
-}
-
-.embla-thumbs__slide {
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.3s;
-}
-
-.embla-thumbs__slide.is-selected {
-  opacity: 1;
-}
-
-.embla-thumbs__slide img {
-  width: 100px;
-  height: 60px;
-  object-fit: cover;
-  border: 2px solid transparent;
-}
-
-.embla-thumbs__slide.is-selected img {
-  border-color: #007bff;
 }

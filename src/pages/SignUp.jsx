@@ -188,7 +188,7 @@ function SignUp() {
             <CountdownTimer
               key={timerReset}
               isActive={isTimerActive}
-              callerComponent="SignUp" // 이 부분을 추가
+              callerComponent="SignUp"
             />
           )}
         </div>

@@ -3,71 +3,23 @@ import { productDetails, postBids } from "@/api/productApi";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Bidding from "@/components/Bidding";
+import ProductsImageView from "@/components/ProductsImageView";
+import { Button } from "@/components/ui/button";
+import LiveChat from "@/components/LiveChat";
 import { Client } from "@stomp/stompjs";
+import { ShoppingBasket } from "lucide-react";
+import CountdownTimer from "@/components/CountdownTimer"; // Import the CountdownTimer
 
 function ProductsDetail() {
   const { id } = useParams();
   const token = useSelector((state) => state.auth.token);
+  const userEmail = useSelector((state) => state.auth.userData.email);
 
   const [client, setClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState("DISCONNECTED");
   const [productInfo, setProductInfo] = useState(null);
-
-  useEffect(() => {
-    const newClient = new Client({
-      brokerURL: `wss://${import.meta.env.VITE_SOCKET_URL}`,
-      connectHeaders: {
-        Authorization: token,
-      },
-      debug: function (str) {
-        console.log("STOMP: " + str);
-      },
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-
-    newClient.onConnect = function (frame) {
-      setConnectionStatus("CONNECTED");
-      console.log("Connected: " + frame);
-
-      newClient.subscribe(`/topic/bidder-count/${id}`, function (message) {
-        console.log("Received: " + message.body);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          JSON.parse(message.body),
-        ]);
-      });
-    };
-
-    newClient.onStompError = function (frame) {
-      setConnectionStatus("ERROR");
-      console.log("Broker reported error: " + frame.headers["message"]);
-      console.log("Additional details: " + frame.body);
-    };
-
-    newClient.onWebSocketClose = function () {
-      setConnectionStatus("CLOSED");
-      console.log("WebSocket Connection Closed");
-    };
-
-    newClient.onDisconnect = function () {
-      setConnectionStatus("DISCONNECTED");
-      console.log("Stomp Disconnected");
-    };
-
-    console.log("Attempting to connect to WebSocket...");
-    newClient.activate();
-    setClient(newClient);
-
-    return () => {
-      console.log("Deactivating WebSocket connection...");
-      if (newClient) {
-        newClient.deactivate();
-      }
-    };
-  }, [id, token]);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     console.log("WebSocket Connection Status:", connectionStatus);
@@ -76,6 +28,7 @@ function ProductsDetail() {
   const getProductDetails = async () => {
     try {
       const response = await productDetails(token, id);
+      setImages(response.productImages || []);
       setProductInfo(response);
     } catch (error) {
       console.error("Failed to fetch product details:", error);
@@ -92,10 +45,8 @@ function ProductsDetail() {
       try {
         const response = await postBids(token, requestBody);
         console.log("Bid placed successfully:", response);
-        // 여기에 성공 처리 로직을 추가하세요 (예: 알림 표시, 상태 업데이트 등)
       } catch (error) {
         console.error("Bidding failed:", error);
-        // 여기에 에러 처리 로직을 추가하세요 (예: 에러 메시지 표시)
       }
     },
     [token, id]
@@ -106,24 +57,40 @@ function ProductsDetail() {
   }, [id, token]);
 
   return (
-    <div>
-      <h1>소켓 테스트</h1>
-      <p>Connection Status: {connectionStatus}</p>
-      {productInfo && (
-        <div>
-          <h2>{productInfo.name}</h2>
-          <p>{productInfo.introduction}</p>
+    <div className="flex w-screen h-screen justify-center mt-20 bg-white pt-5 ">
+      <div className="flex w-3/4">
+        <div className="flex w-1/2 justify-end ">
+          <ProductsImageView images={images} />
         </div>
-      )}
-      <Bidding callPostBids={callPostBids} />
-      <div>
-        <h3>Bidder Count Messages:</h3>
-        <ul>
-          {messages.map((msg, index) => (
-            <li key={index}>{msg}</li>
-          ))}
-        </ul>
+        <div className="ml-5 flex flex-col w-1/2 justify-start items-start ">
+          {/* <hr className="h-1 bg-blue-200 w-full mb-3" />
+          {productInfo && (
+            <div className="items-start justify-start flex flex-col">
+              <p className="text-4xl font-bold">{productInfo.name}</p>
+              <p className="mt-3 text-2xl whitespace-pre text-left">
+                {productInfo.introduction}
+              </p>
+              <span className="mt-3 text-xl font-semibold text-left">
+                경매 시작 가격 <br />
+                <p className="text-2xl">{productInfo.price} 원</p>
+              </span>
+              <CountdownTimer
+                startDateTime={productInfo.startDateTime}
+                endDateTime={productInfo.endDateTime}
+              />
+            </div>
+          )}
+          <hr className="h-1 bg-blue-200 w-full mb-3 mt-3" />
+          <div className="flex flex-row justify-between w-full gap-3">
+            <Button variant="outline" className="text-xl w-1/2 h-14">
+              <ShoppingBasket className="mr-2" />
+              찜하기
+            </Button>
+            <Bidding callPostBids={callPostBids} />
+          </div> */}
+        </div>
       </div>
+      <LiveChat messages={messages} currentUserEmail={userEmail} />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import axios from "./axios";
 
 export const productUpload = async (token, requestBody) => {
+  console.log("token ? : ", token);
   try {
     const response = await axios.post(`/api/products`, requestBody, {
       headers: {
-        Authorization: token,
+        Access_Token: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
     });

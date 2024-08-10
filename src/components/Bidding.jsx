@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useSelector } from "react-redux";
+import { CircleDollarSign } from "lucide-react";
 
 export function Bidding({ callPostBids }) {
   const [currentHighPrice, setCurrentHighPrice] = useState(0);
@@ -34,9 +35,11 @@ export function Bidding({ callPostBids }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button primary>입찰하기</Button>
+        <Button primary className="text-xl w-1/2 h-14">
+          <CircleDollarSign className="mr-2" /> 입찰하기
+        </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-200">
+      <PopoverContent className="w-200 bg-white">
         <div className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-semibold leading-none">입찰하기</h4>

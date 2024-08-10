@@ -2,9 +2,15 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Timer } from "lucide-react";
 
-const CountdownTimer = ({ isActive, callerComponent }) => {
+const CountdownTimer = ({
+  isActive,
+  callerComponent,
+  startDateTime,
+  endDateTime,
+}) => {
   const [seconds, setSeconds] = useState(300); // 5분 = 300초
-
+  const start = new Date(startDateTime);
+  const end = new Date(endDateTime);
   useEffect(() => {
     let interval = null;
 

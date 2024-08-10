@@ -3,7 +3,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  token: null,
+  access_token: null,
+  refresh_token: null,
   isAuthenticated: false,
   userData: {}, // 사용자 정보를 저장할 상태 추가
 };
@@ -13,7 +14,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setToken: (state, action) => {
-      state.token = action.payload;
+      state.access_token = action.payload;
       // state.user = action.payload.user; // 사용자 정보 저장
       state.isAuthenticated = true;
     },
@@ -21,7 +22,8 @@ const authSlice = createSlice({
       state.userData = action.payload; // 사용자 정보 저장
     },
     clearToken: (state) => {
-      state.token = null;
+      state.access_token = null;
+      state.refresh_token = null;
       state.user = null; // 사용자 정보 초기화
       state.isAuthenticated = false;
     },
