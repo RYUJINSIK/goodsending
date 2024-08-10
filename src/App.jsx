@@ -26,9 +26,9 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route element={<PrivateRoute />}>
           <Route path="/product-upload" element={<ProductUpload />} />
-          <Route path="/product/:id" element={<ProductsDetail />} />
           <Route path="/product" element={<ProductsDetail />} />
         </Route>
+        <Route path="/product/:id" element={<ProductsDetail />} />
       </Routes>
     </div>
   );

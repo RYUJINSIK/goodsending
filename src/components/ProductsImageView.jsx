@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Carousel } from "@/components/ui/carousel";
-function ProductsImageView({ images }) {
+function ProductsImageView({ images, productName, startingPrice }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSelect = (index) => {
@@ -8,8 +8,15 @@ function ProductsImageView({ images }) {
   };
 
   return (
-    <div className="carousel-container p-2 bg-white rounded-lg h-max">
-      <Carousel>
+    <div className="p-2 bg-white rounded-lg h-max ">
+      <div className="flex items-center justify-between h-[65px]">
+        <p className="ml-3 text-2xl font-bold">{productName}</p>
+        <p className="text-xl font-semibold text-right">
+          시작 가격: {startingPrice} 원
+        </p>
+      </div>
+
+      <Carousel className="items-center justify-center flex">
         {images.map((image, index) => (
           <div
             key={index}
@@ -18,14 +25,23 @@ function ProductsImageView({ images }) {
             <img
               src={image.url}
               alt={`Slide ${index}`}
-              style={{ width: "450px", height: "450px", borderRadius: "5px" }}
+              style={{
+                width: "450px",
+                height: "450px",
+                borderRadius: "5px",
+                border: "2px solid #b5e4ff",
+              }}
             />
           </div>
         ))}
       </Carousel>
       <div
         className="thumbnail-container"
-        style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "10px",
+        }}
       >
         {images.map((image, index) => (
           <img
@@ -37,7 +53,7 @@ function ProductsImageView({ images }) {
               height: "60px",
               margin: "0 5px",
               cursor: "pointer",
-              border: currentIndex === index ? "3px solid #40A6FD" : "none",
+              border: currentIndex === index ? "2px solid #40A6FD" : "none",
             }}
             onClick={() => handleSelect(index)}
           />
