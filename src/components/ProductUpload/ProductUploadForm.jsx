@@ -18,7 +18,7 @@ import { productUpload } from "@/api/productApi";
 import { useSelector } from "react-redux";
 
 const ProductUploadForm = () => {
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state) => state.auth.access_token);
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
   const [totalFileSize, setTotalFileSize] = useState(0);

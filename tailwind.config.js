@@ -11,7 +11,7 @@ module.exports = {
           dark: "#2779bd",
         },
         secondary: {
-          DEFAULT: "#ffed4a",
+          DEFAULT: "#ad7dff",
           light: "#fff382",
           dark: "#e3ac00",
         },
@@ -28,5 +28,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };

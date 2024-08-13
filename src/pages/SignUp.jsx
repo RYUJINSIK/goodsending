@@ -14,18 +14,18 @@ import JSConfetti from "js-confetti";
 import Welcome from "@/components/Welcome";
 
 function SignUp() {
-  const [email, setEmail] = useState(""); // 가입메일
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [code, setCode] = useState(""); // 인증코드
+  const [code, setCode] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
-  const [showCodeField, setShowCodeField] = useState(false); // 인증코드입력칸 제어
+  const [showCodeField, setShowCodeField] = useState(false);
   const [mailError, setMailError] = useState("");
   const [codeText, setCodeText] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [mailText, setMailText] = useState("인증번호 받기");
-  const [timerReset, setTimerReset] = useState(0); // 타이머 컴포넌트의 key로 사용
+  const [timerReset, setTimerReset] = useState(0);
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,8 +46,8 @@ function SignUp() {
         setMailText("인증번호 재요청");
         setShowCodeField(true);
         setMailError("");
-        setIsTimerActive(true); // 타이머 활성화
-        setTimerReset((prevKey) => prevKey + 1); // 타이머 key 증가
+        setIsTimerActive(true);
+        setTimerReset((prevKey) => prevKey + 1);
       } catch (error) {
         if (error.request.status === 409) {
           setMailError("해당 메일로 가입된 계정이 존재합니다.");
@@ -119,7 +119,7 @@ function SignUp() {
     }
   };
 
-  //Welcome 모달 컨트롤용
+  // Welcome 모달 컨트롤용
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
   const openWelcome = () => setIsWelcomeOpen(true);
   const closeWelcome = () => setIsWelcomeOpen(false);
@@ -144,7 +144,7 @@ function SignUp() {
   };
 
   const labelStyle = "flex w-full max-w-sm items-start pr-2 pb-2 pt-2 text-sm";
-  const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary	";
+  const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary";
   return (
     <div className="flex flex-col items-center w-full">
       <img src="../icon/LogoBlue.png" alt="logo" className="h-20 mb-10" />
@@ -162,13 +162,12 @@ function SignUp() {
       </div>
       {mailError && <p className={errorStyle}>{mailError}</p>}
 
-      {/* <div className="flex w-full items-center"> */}
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${
           showCodeField ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="flex  items-start">
+        <div className="flex items-start">
           <InputOTP
             maxLength={6}
             pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
@@ -188,7 +187,8 @@ function SignUp() {
             <CountdownTimer
               key={timerReset}
               isActive={isTimerActive}
-              callerComponent="SignUp" // 이 부분을 추가
+              callerComponent="SignUp"
+              triggerReset={timerReset}
             />
           )}
         </div>

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearToken } from "@/redux/modules/auth";
+import { logout, refreshAccessToken } from "@/api/userApi";
 
 import {
   DropdownMenu,
@@ -18,15 +19,27 @@ const Header = ({ openLogin }) => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.userData);
+  const token = useSelector((state) => state.auth.access_token);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  const handleLogout = () => {
-    dispatch(clearToken());
+  const handleLogout = async () => {
+    // dispatch(clearToken());
+    try {
+      const response = await logout(token);
+      console.log(response);
+      dispatch(clearToken());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleUploadClick = () => {
     navigate("/product-upload");
   };
+
+  useEffect(() => {
+    console.log("token ? : ", token);
+  }, [token]);
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
