@@ -59,7 +59,10 @@ function ProductsDetail() {
           bidder: JSON.parse(message.body).bidderCount,
           bid: JSON.parse(message.body).biddingCount,
         }));
-        if (JSON.parse(message.body).type === "BID") setActive(!active);
+        if (JSON.parse(message.body).type === "BID") {
+          setActive(!active);
+          setPrice(JSON.parse(message.body).price);
+        }
         if (JSON.parse(message.body).type === "AUCTION_WINNER")
           setAuctionStatus("ENDED");
 
@@ -107,7 +110,11 @@ function ProductsDetail() {
         bidder: response.bidderCount,
         bid: response.biddingCount,
       }));
-      setPrice(response.price);
+      if (response.bidMaxPrice !== null) {
+        setPrice(response.bidMaxPrice);
+      } else {
+        setPrice(response.price);
+      }
       setAuctionStatus(response.status);
       setImages(response.productImages || []);
       setProductInfo(response);
@@ -135,7 +142,6 @@ function ProductsDetail() {
   );
 
   const handleSendMessage = (chatMessage) => {
-    console.log(chatMessage);
     if (
       client &&
       connectionStatus === "CONNECTED" &&
@@ -180,12 +186,6 @@ function ProductsDetail() {
   const renderCountdown = () => {
     if (!auctionStatus) return null;
     switch (auctionStatus) {
-      case "ENDED":
-        return (
-          <p className="text-xl font-bold text-red-600">
-            경매가 종료되었습니다.
-          </p>
-        );
       case "UPCOMING":
         return (
           <div className="bg-blue-100 text-blue-800 p-2 rounded-lg text-center">
@@ -237,6 +237,7 @@ function ProductsDetail() {
     };
     try {
       const Like = await toggleLikes(token, requestBody);
+      console.log("Like ? : ", Like);
       // 찜하기 저장 Or 취소되었다는 알림띄우기(팝오버)
       console.log(Like);
     } catch (error) {

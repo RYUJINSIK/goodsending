@@ -114,10 +114,10 @@ function LiveChat({
       </CardHeader>
       <CardContent
         ref={cardContentRef}
-        className={`w-full h-[400px] overflow-y-auto ${
+        className={`w-full h-[400px] ${
           !chatStatus || !isLoggedIn
-            ? "bg-gray-white opacity-50 scrollbar-hide 	"
-            : "bg-white"
+            ? "bg-gray-white scrollbar-hide overflow-y-hidden	opacity-50"
+            : "bg-white overflow-y-auto "
         }`}
         onScroll={handleScroll}
       >
@@ -130,11 +130,11 @@ function LiveChat({
 
               if (message.type === "AUCTION_WINNER") {
                 return (
-                  <>
-                    <div key={index} className="flex justify-center">
+                  <div key={index}>
+                    <div className="flex justify-center">
                       <div className="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-3 max-w-[100%] w-[95%]">
                         <div className="flex items-center justify-center mb-2">
-                          <Trophy className="h-5 w-5 text-yellow-500 mr-2" />
+                          <PartyPopper className="h-5 w-5 text-yellow-500 mr-2" />
                           <span className="font-bold text-yellow-700">
                             축하합니다 !
                           </span>
@@ -145,15 +145,14 @@ function LiveChat({
                       </div>
                     </div>
 
-                    <div key={index + 1} className="flex justify-center">
-                      <Badge
-                        variant="outline"
-                        className="px-2 py-1 rounded-full text-blackm max-w-[90%]"
-                      >
-                        경매가 종료되었습니다
-                      </Badge>
+                    <div className="flex items-center justify-center w-full">
+                      <div className="flex-grow border-t border-gray-400"></div>
+                      <span className="flex-shrink mx-4 text-black text-sm">
+                        경매가 종료되었습니다.
+                      </span>
+                      <div className="flex-grow border-t border-gray-400"></div>
                     </div>
-                  </>
+                  </div>
                 );
               }
 
