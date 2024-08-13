@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import ProductUpload from "./pages/ProductUpload";
 import ProductsDetail from "./pages/ProductsDetail";
 import PrivateRoute from "./components/PrivateRoute";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const location = useLocation();
@@ -30,6 +31,7 @@ function App() {
         </Route>
         <Route path="/product/:id" element={<ProductsDetail />} />
       </Routes>
+      <Toaster />
     </div>
   );
 }

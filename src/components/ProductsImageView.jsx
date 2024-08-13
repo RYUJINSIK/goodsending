@@ -8,12 +8,12 @@ function ProductsImageView({ images, productName, startingPrice }) {
   };
 
   return (
-    <div className="p-2 bg-white rounded-lg h-max ">
+    <div className="p-2 bg-white rounded-lg h-max border shadow-sm">
       <div className="flex items-center justify-between h-[65px]">
         <p className="ml-3 text-2xl font-bold">{productName}</p>
-        <p className="text-xl font-semibold text-right">
+        {/* <p className="mr-3 text-xl font-semibold text-right">
           시작 가격: {startingPrice} 원
-        </p>
+        </p> */}
       </div>
 
       <Carousel className="items-center justify-center flex">
