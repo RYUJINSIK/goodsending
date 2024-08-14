@@ -46,7 +46,7 @@ export const postBids = async (token, requestBody) => {
 export const toggleLikes = async (token, requestBody) => {
   console.log(token, requestBody);
   try {
-    const response = await axios.post(`/api/likes`, requestBody, {
+    const response = await axios.post(`/api/likes/redis`, requestBody, {
       headers: {
         Access_Token: `Bearer ${token}`,
       },
@@ -74,10 +74,43 @@ export const getLiveChat = async (productId, size, cursorId) => {
   }
 };
 
-export const getProducts = async () => {
+export const getProducts = async (
+  cursor,
+  searchTerm,
+  openProduct,
+  closedProduct
+) => {
+  console.log("api searchTerm : ", searchTerm);
+  console.log("api cursor : ", cursor);
   try {
-    const response = await axios.get(`/api/products?size=20`);
-    console.log(response);
+    const url = `/api/products?size=20${
+      cursor.id
+        ? `&cursorId=${cursor.id}&cursorStatus=${cursor.status}&cursorStartDateTime=${cursor.startDateTime}`
+        : ""
+    }${
+      searchTerm !== "" ? `&keyword=${searchTerm}` : ""
+    }&openProduct=${openProduct}&closedProduct=${closedProduct}`;
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getTOPLikeProducts = async () => {
+  try {
+    const response = await axios.get("/api/likes/redis");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getTOPBidProducts = async () => {
+  try {
+    const response = await axios.get("/api/products/top5/bidderCount");
     return response.data;
   } catch (error) {
     console.log(error);
