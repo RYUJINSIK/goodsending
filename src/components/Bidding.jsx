@@ -10,7 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import { CircleDollarSign } from "lucide-react";
 
-export function Bidding({ callPostBids, currentHighPrice }) {
+export function Bidding({ callPostBids, currentHighPrice, openLogin }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [cash, setCash] = useState(0);
   const [bidPrice, setBidPrice] = useState(currentHighPrice);
@@ -46,62 +46,66 @@ export function Bidding({ callPostBids, currentHighPrice }) {
     }
   };
 
+  const handleButtonClick = () => {
+    if (!isAuthenticated) {
+      openLogin();
+    }
+  };
+
   return (
     <Popover
       className="fixed"
-      open={isPopoverOpen}
-      onOpenChange={setIsPopoverOpen}
+      open={isAuthenticated && isPopoverOpen}
+      onOpenChange={(open) => isAuthenticated && setIsPopoverOpen(open)}
     >
       <PopoverTrigger asChild>
         <Button
           variant="default"
           className="text-xl w-1/2 h-14"
-          onClick={() => {
-            if (!isAuthenticated) {
-              alert("로그인해라");
-              setIsPopoverOpen(false);
-            }
-          }}
+          onClick={handleButtonClick}
         >
           <CircleDollarSign className="mr-2" /> 입찰하기
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[310px] bg-white p-4 rounded-lg shadow-lg">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-semibold leading-none">입찰하기</h4>
-            <p className="text-sm text-gray-500">
-              입찰 신청할 금액을 입력하세요
-            </p>
-            <p className="text-primary text-sm grid-cols-2 h-4">
-              입찰 금액은 현재 최대 입찰가보다 커야 합니다.
-            </p>
-          </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-2 items-center gap-4">
-              <Label htmlFor="cash">캐쉬 잔액</Label>
-              <span className="text-right text-sm">{cash} 원</span>
+      {isAuthenticated && (
+        <PopoverContent className="w-[310px] bg-white p-4 rounded-lg shadow-lg">
+          {" "}
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <h4 className="font-semibold leading-none">입찰하기</h4>
+              <p className="text-sm text-gray-500">
+                입찰 신청할 금액을 입력하세요
+              </p>
+              <p className="text-primary text-sm grid-cols-2 h-4">
+                입찰 금액은 현재 최대 입찰가보다 커야 합니다.
+              </p>
             </div>
-            <div className="grid grid-cols-2 items-center gap-4">
-              <Label htmlFor="bidPrice">입찰 신청 금액</Label>
-              <Input
-                id="bidPrice"
-                type="number"
-                value={bidPrice}
-                onChange={handleBidPriceChange}
-                className="h-8 text-right"
-              />{" "}
-            </div>
-            {/* <div className="grid grid-cols-2 items-center gap-4">
+            <div className="grid gap-2">
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label htmlFor="cash">캐쉬 잔액</Label>
+                <span className="text-right text-sm">{cash} 원</span>
+              </div>
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label htmlFor="bidPrice">입찰 신청 금액</Label>
+                <Input
+                  id="bidPrice"
+                  type="number"
+                  value={bidPrice}
+                  onChange={handleBidPriceChange}
+                  className="h-8 text-right"
+                />{" "}
+              </div>
+              {/* <div className="grid grid-cols-2 items-center gap-4">
               <Label htmlFor="balance">입찰 신청 후 잔액</Label>
               <span className="text-right">{balance} 원</span>
             </div> */}
+            </div>
+            <Button variant="default" onClick={handleSubmit}>
+              신청하기
+            </Button>
           </div>
-          <Button variant="default" onClick={handleSubmit}>
-            신청하기
-          </Button>
-        </div>
-      </PopoverContent>
+        </PopoverContent>
+      )}
     </Popover>
   );
 }

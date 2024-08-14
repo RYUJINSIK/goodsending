@@ -28,7 +28,6 @@ function formatAuctionTime(startDateTime) {
 }
 
 function Top5ProductCard({ product }) {
-  console.log("product ? : ", product);
   return (
     <div className="relative mx-auto overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 via-gray-200 to-primary p-[3px] transition-all duration-300 ease-in-out transform hover:scale-105">
       <div className="animate-spin-slow absolute -top-40 -bottom-40 left-10 right-10 bg-gradient-to-r from-transparent via-white/90 to-transparent"></div>

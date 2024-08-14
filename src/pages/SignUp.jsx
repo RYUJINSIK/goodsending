@@ -185,7 +185,6 @@ function SignUp() {
           </InputOTP>
           {isTimerActive && (
             <CountdownTimer
-              key={timerReset}
               isActive={isTimerActive}
               callerComponent="SignUp"
               triggerReset={timerReset}

@@ -86,3 +86,18 @@ export const refreshAccessToken = async () => {
     throw error;
   }
 };
+
+// 엑세스 토큰 유효성 체크
+export const accessTokenCheck = async (token) => {
+  try {
+    const response = await axios.get("/api/members/validateAccessToken", {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to access token verification:", error);
+    throw error;
+  }
+};

@@ -22,7 +22,10 @@ import ProductSkeleton from "@/components/ProductSkeleton";
 import Top5ProductCard from "@/components/Top5ProductCard";
 import { Crown, Gift } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useSelector } from "react-redux";
+
 const Main = () => {
+  const token = useSelector((state) => state.auth.access_token);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
@@ -183,7 +186,6 @@ const Main = () => {
           ))}
         </CarouselContent>
       </Carousel>
-
       <div className="flex flex-row items-center space-x-4 mt-8 mb-4">
         <Crown className="h-8 w-8 text-white bg-yellow-400 p-1 rounded-lg" />
         <p className="text-2xl font-bold">

@@ -16,9 +16,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import ImageUpload from "./ImageUpload";
 import { productUpload } from "@/api/productApi";
 import { useSelector } from "react-redux";
-
+import { getUserInfo } from "@/api/userApi";
+import { useDispatch } from "react-redux";
+import { setUserData } from "@/redux/modules/auth";
 const ProductUploadForm = () => {
   const token = useSelector((state) => state.auth.access_token);
+  const dispatch = useDispatch();
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
   const [totalFileSize, setTotalFileSize] = useState(0);
@@ -111,9 +114,20 @@ const ProductUploadForm = () => {
     try {
       const response = await productUpload(token, formData);
       console.log("Upload successful:", response.data);
+      updateUserInfo();
       navigate("/");
     } catch (error) {
       console.error("Upload failed:", error);
+    }
+  };
+
+  const updateUserInfo = async () => {
+    try {
+      const userData = await getUserInfo(token);
+      console.log("User Data : ", userData);
+      dispatch(setUserData(userData.data));
+    } catch (error) {
+      console.log(error);
     }
   };
 

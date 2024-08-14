@@ -1,20 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
 import { productDetails, postBids, toggleLikes } from "@/api/productApi";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Bidding from "@/components/Bidding";
 import ProductsImageView from "@/components/ProductsImageView";
 import { Button } from "@/components/ui/button";
 import LiveChat from "@/components/LiveChat";
-import { ShoppingBasket, Users, HandCoins } from "lucide-react";
+import { ShoppingBasket, Users, HandCoins, TriangleAlert } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
 import Login from "@/components/Login";
 import { Client } from "@stomp/stompjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { accessTokenCheck } from "@/api/userApi";
+import { getUserInfo } from "@/api/userApi";
+import { setUserData } from "@/redux/modules/auth";
 
 function ProductsDetail() {
   const { id } = useParams();
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.access_token);
 
   // const token = useSelector((state) => state.auth.token);
@@ -29,6 +33,7 @@ function ProductsDetail() {
   const [active, setActive] = useState(false);
   const [price, setPrice] = useState(0);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [timerReset, setTimerReset] = useState(0);
   const [bidInfo, setBidInfo] = useState({
     bidder: 0,
     bid: 0,
@@ -64,6 +69,7 @@ function ProductsDetail() {
         if (JSON.parse(message.body).type === "BID") {
           setActive(!active);
           setPrice(JSON.parse(message.body).price);
+          setTimerReset((prevKey) => prevKey + 1);
         }
         if (JSON.parse(message.body).type === "AUCTION_WINNER")
           setAuctionStatus("ENDED");
@@ -135,6 +141,7 @@ function ProductsDetail() {
       try {
         const response = await postBids(token, requestBody);
         console.log("Bid placed successfully:", response);
+        updateUserInfo();
       } catch (error) {
         alert(error.response.data.message); // 현재 최고 입찰 금액이 입력한 금액보다 큽니다.
         console.error("Bidding failed:", error);
@@ -143,23 +150,45 @@ function ProductsDetail() {
     [token, id]
   );
 
+  const updateUserInfo = async () => {
+    try {
+      const userData = await getUserInfo(token);
+      console.log("User Data : ", userData);
+      dispatch(setUserData(userData.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const tokenCheck = async () => {
+    try {
+      const result = await accessTokenCheck(token);
+      if (result.data === "유효한 토큰입니다.") return true;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   const handleSendMessage = (chatMessage) => {
-    if (
-      client &&
-      connectionStatus === "CONNECTED" &&
-      chatMessage.trim() !== ""
-    ) {
-      client.publish({
-        destination: `/app/message`, // 서버의 목적지에 맞게 설정
-        body: JSON.stringify({
-          productId: productInfo.productId,
-          message: chatMessage,
-          type: "GENERAL_CHAT",
-        }),
-        headers: {
-          Access_Token: `Bearer ${token}`, // 예: 인증 토큰 추가
-        },
-      });
+    if (tokenCheck()) {
+      if (
+        client &&
+        connectionStatus === "CONNECTED" &&
+        chatMessage.trim() !== ""
+      ) {
+        client.publish({
+          destination: `/app/message`, // 서버의 목적지에 맞게 설정
+          body: JSON.stringify({
+            productId: productInfo.productId,
+            message: chatMessage,
+            type: "GENERAL_CHAT",
+          }),
+          headers: {
+            Access_Token: `Bearer ${token}`, // 예: 인증 토큰 추가
+          },
+        });
+      }
+    } else {
+      alert("잠시 후 다시요청하세요.");
     }
   };
 
@@ -204,7 +233,7 @@ function ProductsDetail() {
               isActive={true}
               callerComponent="ProductsDetail"
               endDateTime={productInfo.maxEndDateTime}
-              triggerReset={active}
+              triggerReset={timerReset}
             />
           </div>
         );
@@ -312,7 +341,29 @@ function ProductsDetail() {
               </div>
             </div>
 
-            <div className="ml-5 flex flex-col w-1/2 justify-start items-start">
+            <div className="ml-5 flex flex-col w-1/2 justify-start items-start relative">
+              {!isAuthenticated && (
+                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10 w-[465px] h-[620px] rounded-lg -ml-2 -mt-2">
+                  <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                    <div className="flex flex-row items-center mb-3">
+                      <TriangleAlert className="text-primary" />
+                      <p className="text-lg font-bold ml-2">
+                        로그인이 필요한 서비스입니다.
+                      </p>
+                    </div>
+                    <p className="mb-4 text-sm">
+                      경매에 참여하시려면 로그인을 해주세요.
+                    </p>
+                    <button
+                      onClick={openLogin}
+                      className="bg-primary text-white text-sm font-bold px-4 py-2 rounded hover:bg-primary-dark transition"
+                    >
+                      로그인하기
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <LiveChat
                 title={productInfo.name}
                 messages={messages}
@@ -332,7 +383,11 @@ function ProductsDetail() {
                   찜하기
                 </Button>
 
-                <Bidding callPostBids={callPostBids} currentHighPrice={price} />
+                <Bidding
+                  callPostBids={callPostBids}
+                  currentHighPrice={price}
+                  openLogin={openLogin}
+                />
               </div>
               {productInfo && (
                 <>
@@ -342,7 +397,7 @@ function ProductsDetail() {
                       <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4 ">
                         {auctionStatus === "ENDED"
                           ? productInfo.finalPrice
-                          : price}{" "}
+                          : price}
                         원
                       </span>
                     </p>
@@ -370,10 +425,6 @@ function ProductsDetail() {
             </div>
           </>
         )}
-
-        {/* <Button onClick={() => setActive(!active)} className="mt-5">
-          TEST
-        </Button> */}
       </div>
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
       <ToastContainer position="top-center" autoClose={3000} />
