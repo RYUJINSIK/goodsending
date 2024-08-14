@@ -233,7 +233,7 @@ function ProductsDetail() {
     }
     const requestBody = {
       productId: productInfo.productId,
-      // press: true,
+      press: true,
     };
     try {
       const Like = await toggleLikes(token, requestBody);

@@ -23,11 +23,12 @@ const Header = ({ openLogin }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const handleLogout = async () => {
-    // dispatch(clearToken());
+    const logoutToken = token;
+    dispatch(clearToken());
     try {
-      const response = await logout(token);
+      const response = await logout(logoutToken);
       console.log(response);
-      dispatch(clearToken());
+      // dispatch(clearToken());
     } catch (error) {
       console.log(error);
     }

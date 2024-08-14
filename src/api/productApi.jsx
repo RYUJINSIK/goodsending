@@ -46,7 +46,7 @@ export const postBids = async (token, requestBody) => {
 export const toggleLikes = async (token, requestBody) => {
   console.log(token, requestBody);
   try {
-    const response = await axios.post(`/api/likes`, requestBody, {
+    const response = await axios.post(`/api/likes/redis`, requestBody, {
       headers: {
         Access_Token: `Bearer ${token}`,
       },
