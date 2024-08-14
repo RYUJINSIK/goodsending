@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Carousel,
   CarouselContent,
@@ -9,6 +11,9 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import Login from "@/components/Login";
+import { getProducts } from "@/api/productApi";
+import ProductCard from "@/components/ProductCard";
+import ProductSkeleton from "@/components/ProductSkeleton";
 
 const Main = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -26,7 +31,50 @@ const Main = () => {
     "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",
     "https://media.istockphoto.com/id/638051946/ko/사진/분홍색-베개가-있는-고양이-발-유리-아래에서-촬영.jpg?s=612x612&w=0&k=20&c=7QINmPYds1yRVXq75b00V13lhlHcA3BmYXG-rfcNGmE=",
   ];
-  const ProductCard = ({ title, startingPrice, imageUrl }) => (
+
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+
+  const lastProductElementRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      // 여기에 실제 API 호출 로직을 구현하세요
+      const response = await getProducts();
+      console.log(response.content);
+      const newProducts = response.content;
+      setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+      setHasMore(newProducts.length > 0);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    console.log(products);
+  }, []);
+
+  const ProductCardExample = ({ title, startingPrice, imageUrl }) => (
     <Card className="overflow-hidden">
       <div className="h-48 overflow-hidden">
         <img
@@ -43,6 +91,7 @@ const Main = () => {
       </CardContent>
     </Card>
   );
+
   return (
     <div className="container mx-auto p-4">
       <Carousel>
@@ -66,7 +115,7 @@ const Main = () => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
         {[...Array(5)].map((_, index) => (
-          <ProductCard
+          <ProductCardExample
             key={index}
             title={`매물 이름 ${index + 1}`}
             startingPrice={1000 + index * 500}
@@ -74,7 +123,8 @@ const Main = () => {
           />
         ))}
       </div>
-      <div className="flex items-center justify-stretch mt-8 mb-4">
+
+      <div className="flex items-center justify-stretch mt-4">
         <h2 className="text-2xl font-bold mx-4">전체 상품 보기</h2>
         <div className="relative w-64">
           <input
@@ -98,16 +148,25 @@ const Main = () => {
           </svg>
         </div>
       </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {[...Array(20)].map((_, index) => (
-          <ProductCard
-            key={index + 5}
-            title={`매물 이름 ${index + 6}`}
-            startingPrice={1200 + index * 300}
-            imageUrl={images[index % images.length]}
-          />
-        ))}
+      <div className="container mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
+          {products.map((product, index) => (
+            <div
+              key={product.id}
+              ref={index === products.length - 1 ? lastProductElementRef : null}
+              onClick={() => {
+                navigate(`product/${product.productId}`);
+              }}
+              className="cursor-pointer w-full"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+          {loading &&
+            Array(5)
+              .fill(0)
+              .map((_, index) => <ProductSkeleton key={index} />)}
+        </div>
       </div>
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
     </div>

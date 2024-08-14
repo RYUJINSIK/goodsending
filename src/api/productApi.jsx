@@ -73,3 +73,14 @@ export const getLiveChat = async (productId, size, cursorId) => {
     throw error;
   }
 };
+
+export const getProducts = async () => {
+  try {
+    const response = await axios.get(`/api/products?size=20`);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
