@@ -10,8 +10,13 @@ import {
 } from "@/components/ui/carousel";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Login from "@/components/Login";
-import { getProducts } from "@/api/productApi";
+import {
+  getProducts,
+  getTOPLikeProducts,
+  getTOPBidProducts,
+} from "@/api/productApi";
 import ProductCard from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
 
@@ -34,9 +39,25 @@ const Main = () => {
 
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [cursor, setCursor] = useState({
+    id: undefined,
+    status: undefined,
+    startDateTime: undefined,
+  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [auctionStatus, setAuctionStatus] = useState("all");
+  const [isAuctionTime, setIsAcutionTime] = useState(false);
+
+  const checkTime = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    // 12시~15시 또는 18시~21시인지 확인
+    return (hours >= 12 && hours < 15) || (hours >= 18 && hours < 21);
+  };
   const observer = useRef();
 
   const lastProductElementRef = useCallback(
@@ -53,14 +74,43 @@ const Main = () => {
     [loading, hasMore]
   );
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (isInitialSearch = false) => {
     setLoading(true);
     try {
-      // 여기에 실제 API 호출 로직을 구현하세요
-      const response = await getProducts();
-      console.log(response.content);
+      let openProduct = false;
+      let closedProduct = false;
+
+      if (auctionStatus === "ongoing") {
+        openProduct = true;
+      } else if (auctionStatus === "ended") {
+        closedProduct = true;
+      }
+
+      const currentCursor = isInitialSearch
+        ? { id: undefined, status: undefined, startDateTime: undefined }
+        : cursor;
+
+      const response = await getProducts(
+        currentCursor,
+        searchTerm,
+        openProduct,
+        closedProduct
+      );
       const newProducts = response.content;
-      setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+      console.log("newProducts ? ", newProducts);
+
+      setProducts((prevProducts) =>
+        isInitialSearch ? newProducts : [...prevProducts, ...newProducts]
+      );
+
+      if (newProducts.length > 0) {
+        const lastProduct = newProducts[newProducts.length - 1];
+        setCursor({
+          id: lastProduct.productId,
+          status: lastProduct.status,
+          startDateTime: lastProduct.startDateTime,
+        });
+      }
       setHasMore(newProducts.length > 0);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -69,10 +119,56 @@ const Main = () => {
     }
   };
 
+  // 검색 버튼 클릭 핸들러
+  const handleSearch = () => {
+    setProducts([]);
+    setCursor({
+      id: undefined,
+      status: undefined,
+      startDateTime: undefined,
+    });
+    fetchProducts(true); // true를 전달하여 초기 검색임을 표시
+  };
   useEffect(() => {
-    fetchProducts();
-    console.log(products);
+    if (page > 1) {
+      fetchProducts();
+    }
+  }, [page]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const auctionTime = checkTime();
+      setIsAcutionTime(auctionTime);
+      console.log("auctionTime ? : ", auctionTime);
+      try {
+        let result;
+        if (auctionTime) {
+          result = await getTOPBidProducts(); // A API 호출
+        } else {
+          result = await getTOPLikeProducts(); // B API 호출
+        }
+        console.log("time Data ? : ", result);
+        console.log("time DataLength ? : ", result.length);
+        console.log(result);
+        setTopProducts(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    fetchProducts(true);
   }, []);
+
+  // useEffect(() => {
+  //   setProducts([]);
+  //   setCursor({
+  //     id: undefined,
+  //     status: undefined,
+  //     startDateTime: undefined,
+  //   });
+  //   fetchProducts();
+  // }, [searchTerm, auctionStatus]);
 
   const ProductCardExample = ({ title, startingPrice, imageUrl }) => (
     <Card className="overflow-hidden">
@@ -126,10 +222,12 @@ const Main = () => {
 
       <div className="flex items-center justify-stretch mt-4">
         <h2 className="text-2xl font-bold mx-4">전체 상품 보기</h2>
-        <div className="relative w-64">
+        <div className="relative w-64 mr-4">
           <input
             type="text"
             placeholder="검색"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="border rounded-full p-2 mt-2 mb-4 w-full pl-10 pr-4 py-2"
           />
           <svg
@@ -147,6 +245,18 @@ const Main = () => {
             ></path>
           </svg>
         </div>
+        <select
+          value={auctionStatus}
+          onChange={(e) => setAuctionStatus(e.target.value)}
+          className="border rounded-full p-2 mt-2 mb-4"
+        >
+          <option value="all">전체</option>
+          <option value="ongoing">진행중</option>
+          <option value="ended">종료</option>
+        </select>
+        <Button onClick={handleSearch} className="ml-4">
+          검색
+        </Button>
       </div>
       <div className="container mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
@@ -165,7 +275,14 @@ const Main = () => {
           {loading &&
             Array(5)
               .fill(0)
-              .map((_, index) => <ProductSkeleton key={index} />)}
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4"
+                >
+                  <ProductSkeleton />
+                </div>
+              ))}
         </div>
       </div>
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
