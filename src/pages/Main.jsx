@@ -19,7 +19,9 @@ import {
 } from "@/api/productApi";
 import ProductCard from "@/components/ProductCard";
 import ProductSkeleton from "@/components/ProductSkeleton";
-
+import Top5ProductCard from "@/components/Top5ProductCard";
+import { Crown, Gift } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 const Main = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const openLogin = () => setIsLoginOpen(true);
@@ -32,7 +34,7 @@ const Main = () => {
     }
   }, []);
   const images = [
-    "https://media.istockphoto.com/id/175194979/ko/사진/커요-늘이다.jpg?s=1024x1024&w=is&k=20&c=ytEWnY4uZNI7BXRdwSJiWAVD0hGz9u6CNB0zg0PsYPQ=",
+    "../icon/banner1.png",
     "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",
     "https://media.istockphoto.com/id/638051946/ko/사진/분홍색-베개가-있는-고양이-발-유리-아래에서-촬영.jpg?s=612x612&w=0&k=20&c=7QINmPYds1yRVXq75b00V13lhlHcA3BmYXG-rfcNGmE=",
   ];
@@ -142,14 +144,12 @@ const Main = () => {
       console.log("auctionTime ? : ", auctionTime);
       try {
         let result;
-        if (!auctionTime) {
-          result = await getTOPBidProducts(); // A API 호출
+        if (auctionTime) {
+          result = await getTOPBidProducts(); // 입찰순 API 호출
         } else {
-          result = await getTOPLikeProducts(); // B API 호출
+          result = await getTOPLikeProducts(); // 좋아요순 API 호출
         }
-        console.log("time Data ? : ", result);
-        console.log("time DataLength ? : ", result.length);
-        console.log(result);
+        console.log("TOP5 ? : ", result);
         setTopProducts(result);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -160,37 +160,17 @@ const Main = () => {
     fetchProducts(true);
   }, []);
 
-  // useEffect(() => {
-  //   setProducts([]);
-  //   setCursor({
-  //     id: undefined,
-  //     status: undefined,
-  //     startDateTime: undefined,
-  //   });
-  //   fetchProducts();
-  // }, [searchTerm, auctionStatus]);
-
-  const ProductCardExample = ({ title, startingPrice, imageUrl }) => (
-    <Card className="overflow-hidden">
-      <div className="h-48 overflow-hidden">
-        <img
-          src={imageUrl}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg">{title}</h3>
-        <p className="text-sm text-gray-600">
-          경매 시작 가격: {startingPrice}원
-        </p>
-      </CardContent>
-    </Card>
-  );
-
   return (
-    <div className="container mx-auto p-4">
-      <Carousel>
+    <div className="container mx-auto p-4 mt-24">
+      <Carousel
+        plugins={[
+          Autoplay({
+            delay: 5000,
+            stopOnInteraction: false,
+            stopOnMouseEnter: true,
+          }),
+        ]}
+      >
         <CarouselContent>
           {images.map((image, index) => (
             <CarouselItem key={index}>
@@ -202,28 +182,34 @@ const Main = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
       </Carousel>
 
-      <div className="flex items-center justify-between mt-8 mb-4">
-        <h2 className="text-2xl font-bold">🔥 TOP5 인기 매물</h2>
+      <div className="flex flex-row items-center space-x-4 mt-8 mb-4">
+        <Crown className="h-8 w-8 text-white bg-yellow-400 p-1 rounded-lg" />
+        <p className="text-2xl font-bold">
+          {isAuctionTime ? "실시간 입찰수 TOP5 매물" : "찜하기 TOP5 매물"}
+        </p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
-        {[...Array(5)].map((_, index) => (
-          <ProductCardExample
-            key={index}
-            title={`매물 이름 ${index + 1}`}
-            startingPrice={1000 + index * 500}
-            imageUrl={images[index % images.length]}
-          />
+        {topProducts.map((topProduct) => (
+          <div
+            key={topProduct.id}
+            onClick={() => {
+              navigate(`product/${topProduct.productId}`);
+            }}
+            className="cursor-pointer w-full"
+          >
+            <Top5ProductCard product={topProduct} />
+          </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between bg-white shadow-md rounded-lg p-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 w-full md:w-auto md:mb-0">
-          상품 목록
-        </h2>
+      <div className="flex flex-wrap items-center justify-between bg-white mt-8">
+        <div className="flex flex-row items-center space-x-4 mt-8 mb-4">
+          <Gift className="h-8 w-8 text-white bg-sky-500 p-1 rounded-lg" />
+          <p className="text-2xl font-bold">상품 목록</p>
+        </div>
+
         <div className="flex flex-wrap items-center space-x-4 w-full md:w-auto">
           <div className="relative flex-grow md:flex-grow-0 md:w-64">
             <input
@@ -234,11 +220,12 @@ const Main = () => {
               className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <svg
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 cursor-pointer"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
+              onClick={handleSearch}
             >
               <path
                 strokeLinecap="round"
@@ -257,12 +244,6 @@ const Main = () => {
             <option value="ongoing">진행중</option>
             <option value="ended">종료</option>
           </select>
-          <Button
-            onClick={handleSearch}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          >
-            검색
-          </Button>
         </div>
       </div>
       <div className="container mx-auto">

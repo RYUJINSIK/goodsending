@@ -10,6 +10,8 @@ import { ShoppingBasket, Users, HandCoins } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
 import Login from "@/components/Login";
 import { Client } from "@stomp/stompjs";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ProductsDetail() {
   const { id } = useParams();
@@ -237,13 +239,60 @@ function ProductsDetail() {
     };
     try {
       const Like = await toggleLikes(token, requestBody);
-      console.log("Like ? : ", Like);
-      // 찜하기 저장 Or 취소되었다는 알림띄우기(팝오버)
-      console.log(Like);
+      if (Like.data.message === "ALREADY_LIKE") showToast("ALREADY");
+      if (Like.data.message === "CREATE_SUCCESS") showToast("SUCCESS");
     } catch (error) {
       console.log(error);
     }
   };
+
+  const showToast = (type) => {
+    switch (type) {
+      case "ALREADY":
+        toast.info("이미 찜한 상품입니다!");
+        break;
+      case "SUCCESS":
+        toast.success("찜목록에 추가되었습니다.");
+        break;
+      default:
+        toast.error("오류가 발생했습니다.");
+    }
+  };
+
+  function formatAuctionTime(startDateTime, dynamicEndDateTime) {
+    const startDate = new Date(startDateTime);
+    let endDate;
+    let dynamicEndDate;
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}.${month}.${day}`;
+    }
+
+    function formatTime(date) {
+      let hours = date.getHours();
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // 0시는 12시로 표시
+      return `${String(hours).padStart(2, "0")}:${minutes} ${ampm}`;
+    }
+
+    const formattedStart = `${formatDate(startDate)} ${formatTime(startDate)}`;
+
+    if (dynamicEndDateTime) {
+      endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000); // 3시간 추가
+      dynamicEndDate = new Date(dynamicEndDateTime);
+      return `${formattedStart} ~ ${formatTime(
+        endDate
+      )} (실제 마감시간 ${formatTime(dynamicEndDate)})`;
+    } else {
+      endDate = new Date(startDate.getTime() + 3 * 60 * 60 * 1000); // 3시간 추가
+      return `${formattedStart} ~ ${formatTime(endDate)}`;
+    }
+  }
 
   return (
     <div className="flex flex-col w-screen h-100vh justify-center mt-20 pt-5">
@@ -291,12 +340,22 @@ function ProductsDetail() {
                     <p className="text-xl font-semibold text-center w-full bg-white p-3 rounded-lg border border-primary">
                       {renderPriceLabel()}:{" "}
                       <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4 ">
-                        {price} 원
+                        {auctionStatus === "ENDED"
+                          ? productInfo.finalPrice
+                          : price}{" "}
+                        원
                       </span>
                     </p>
                     <div className="w-full mt-3">{renderCountdown()}</div>
+                    <p className="w-full mt-1 text-sm">
+                      경매 시간 :{" "}
+                      {formatAuctionTime(
+                        productInfo.startDateTime,
+                        productInfo.dynamicEndDateTime
+                      )}
+                    </p>
                   </div>
-                  <div className="flex flex-row justify-between w-[450px] gap-3 mt-3">
+                  <div className="flex flex-row justify-between w-[450px] gap-3 mt-3 mb-7">
                     <div className="flex items-center w-1/2 justify-end">
                       <Users className="w-6 h-6 mr-2" />
                       <span>입찰자수 : {bidInfo.bidder}명</span>
@@ -317,6 +376,7 @@ function ProductsDetail() {
         </Button> */}
       </div>
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 }

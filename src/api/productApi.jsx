@@ -1,7 +1,6 @@
 import axios from "./axios";
 
 export const productUpload = async (token, requestBody) => {
-  console.log("token ? : ", token);
   try {
     const response = await axios.post(`/api/products`, requestBody, {
       headers: {
@@ -18,7 +17,6 @@ export const productUpload = async (token, requestBody) => {
 };
 
 export const productDetails = async (productId) => {
-  console.log("productId? ", productId);
   try {
     const response = await axios.get(`/api/products/${productId}`);
     return response.data;
@@ -44,7 +42,6 @@ export const postBids = async (token, requestBody) => {
 };
 
 export const toggleLikes = async (token, requestBody) => {
-  console.log(token, requestBody);
   try {
     const response = await axios.post(`/api/likes/redis`, requestBody, {
       headers: {
@@ -80,8 +77,6 @@ export const getProducts = async (
   openProduct,
   closedProduct
 ) => {
-  console.log("api searchTerm : ", searchTerm);
-  console.log("api cursor : ", cursor);
   try {
     const url = `/api/products?size=20${
       cursor.id

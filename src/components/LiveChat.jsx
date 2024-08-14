@@ -110,7 +110,9 @@ function LiveChat({
   return (
     <Card className="bg-white h-[535px] w-[450px] p-2 ">
       <CardHeader>
-        <CardDescription>{title} 구매자들 실시간 채팅방</CardDescription>
+        <CardDescription className="text-sm">
+          {title} 실시간 채팅방
+        </CardDescription>
       </CardHeader>
       <CardContent
         ref={cardContentRef}
