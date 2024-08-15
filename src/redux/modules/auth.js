@@ -24,7 +24,7 @@ const authSlice = createSlice({
     clearToken: (state) => {
       state.access_token = null;
       state.refresh_token = null;
-      state.user = null; // 사용자 정보 초기화
+      state.userData = {}; // user 대신 userData를 사용
       state.isAuthenticated = false;
     },
   },

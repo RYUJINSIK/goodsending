@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearToken } from "@/redux/modules/auth";
 import { logout, refreshAccessToken } from "@/api/userApi";
+import { persistor } from "@/redux/config/configStore";
 
 import {
   DropdownMenu,
@@ -23,13 +24,25 @@ const Header = ({ openLogin, onTabChange }) => {
 
   const handleLogout = async () => {
     const logoutToken = token;
-    dispatch(clearToken());
     try {
+      // 먼저 서버에 로그아웃 요청을 보냅니다.
       const response = await logout(logoutToken);
       console.log(response);
-      // dispatch(clearToken());
+
+      // 서버 로그아웃이 성공하면 로컬 상태를 정리합니다.
+      dispatch(clearToken());
+
+      // Redux 상태와 localStorage를 초기화합니다.
+      persistor.purge().then(() => {
+        console.log("Purge completed");
+        // 필요한 경우 여기서 페이지를 새로고침하거나 로그인 페이지로 리다이렉트할 수 있습니다.
+        // window.location.reload();
+        // 또는
+        // navigate('/login');
+      });
     } catch (error) {
-      console.log(error);
+      console.error("Logout failed:", error);
+      // 에러 처리 (예: 사용자에게 알림)
     }
   };
 

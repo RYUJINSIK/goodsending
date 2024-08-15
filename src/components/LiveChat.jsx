@@ -32,7 +32,7 @@ function LiveChat({
   const cardContentRef = useRef(null);
   const [cursorId, setCursorId] = useState(undefined);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true); // Initial loading state
+  const [initialLoading, setInitialLoading] = useState(true);
   const [chatStatus, setChatStatus] = useState(true);
   const user = useSelector((state) => state.auth.userData);
 
@@ -46,7 +46,7 @@ function LiveChat({
       if (inputValue.trim()) {
         handleSendMessage(inputValue);
         setInputValue("");
-        scrollToBottom(); // Scroll to bottom when a new message is sent
+        scrollToBottom(true); // 강제로 스크롤 내림
       }
     }
   };
@@ -55,7 +55,7 @@ function LiveChat({
     if (inputValue.trim()) {
       handleSendMessage(inputValue);
       setInputValue("");
-      scrollToBottom(); // Scroll to bottom when a new message is sent
+      scrollToBottom(true); // 강제로 스크롤 내림
     }
   };
 
@@ -67,17 +67,30 @@ function LiveChat({
     }
   };
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (force = false) => {
     if (cardContentRef.current) {
-      cardContentRef.current.scrollTop = cardContentRef.current.scrollHeight;
+      const scrollHeight = cardContentRef.current.scrollHeight;
+      const height = cardContentRef.current.clientHeight;
+      const maxScrollTop = scrollHeight - height;
+
+      if (force || cardContentRef.current.scrollTop >= maxScrollTop - 100) {
+        setTimeout(() => {
+          if (cardContentRef.current) {
+            cardContentRef.current.scrollTop =
+              cardContentRef.current.scrollHeight;
+          }
+        }, 100);
+      }
     }
   };
 
   useEffect(() => {
     const loadMessages = async () => {
       await getChatMessage();
-      scrollToBottom();
-      setInitialLoading(false);
+      if (initialLoading) {
+        scrollToBottom(true);
+        setInitialLoading(false);
+      }
     };
 
     setTimeout(loadMessages, 1000);
@@ -92,7 +105,21 @@ function LiveChat({
         setCursorId(response.content[0].id);
       }
 
-      setMessages((prevMessages) => [...sortedMessages, ...prevMessages]);
+      setMessages((prevMessages) => {
+        const newMessages = [...sortedMessages, ...prevMessages];
+
+        // 새 메시지가 추가된 후 스크롤 위치 조정
+        setTimeout(() => {
+          if (cardContentRef.current) {
+            const scrollHeight = cardContentRef.current.scrollHeight;
+            const oldScrollHeight =
+              scrollHeight - cardContentRef.current.clientHeight;
+            cardContentRef.current.scrollTop = scrollHeight - oldScrollHeight;
+          }
+        }, 0);
+
+        return newMessages;
+      });
     } catch (error) {
       console.error("Failed to fetch product details:", error);
     }

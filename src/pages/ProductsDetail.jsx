@@ -395,9 +395,7 @@ function ProductsDetail() {
                     <p className="text-xl font-semibold text-center w-full bg-white p-3 rounded-lg border border-primary">
                       {renderPriceLabel()}:{" "}
                       <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4 ">
-                        {auctionStatus === "ENDED"
-                          ? productInfo.finalPrice
-                          : price}
+                        {auctionStatus === "ENDED" ? productInfo.status : price}
                         원
                       </span>
                     </p>

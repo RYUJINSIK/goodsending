@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useFormatPrice } from "@/hooks/useFormatPrice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -263,6 +264,8 @@ const UserInfoContent = () => {
     }
   }, [access_token, userData.memberId]);
 
+  const formattedPrice = useFormatPrice(userInfo.cash);
+
   return (
     <Card className="min-w-[650px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white p-6">
       <Card className="min-w-[500px] min-h-[200px] bg-gray-white shadow-md p-5 mb-8">
@@ -284,7 +287,7 @@ const UserInfoContent = () => {
                 <div className="flex space-x-2">
                   <div className="text-center">
                     <h3 className="text-sm font-semibold">캐시</h3>
-                    <p className="text-md font-bold">{userInfo.cash}원</p>
+                    <p className="text-md font-bold">{formattedPrice}원</p>
                   </div>
                   <div className="text-center">
                     <h3 className="text-sm font-semibold">포인트</h3>
@@ -442,6 +445,7 @@ const LikedProducts = () => {
   const fetchProducts = async (resetProducts = false) => {
     try {
       const response = await getLikedProducts(token, page, size, sortBy, isAsc);
+      console.log("좋아요 한 목록 : ", response.content);
       if (response && Array.isArray(response.content)) {
         setProducts((prev) =>
           resetProducts ? response.content : [...prev, ...response.content]
