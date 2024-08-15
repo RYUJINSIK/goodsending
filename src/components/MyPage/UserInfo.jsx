@@ -5,10 +5,14 @@ import {
   Dialog,
   DialogTrigger,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { chargeCash } from "@/api/productApi";
 
-const UserInfo = ({ user }) => {
+const UserInfo = ({ user, token }) => {
+  console.log(user);
   const [cash, setCash] = useState("");
 
   const formatNumber = (value) => {
@@ -23,8 +27,15 @@ const UserInfo = ({ user }) => {
     setCash(formattedValue);
   };
 
+  const handleChargeCash = async () => {
+    const cashAmount = parseInt(cash.replace(/,/g, ""), 10);
+    const response = await chargeCash(token, user.memberId, cashAmount);
+    console.log("cash charged successfully:", response);
+    setCash("");
+  };
+
   return (
-    <Card className="p-5 mb-5 min-w-[320px] bg-white">
+    <Card className="p-5 mb-5 bg-white">
       <h3 className="text-lg font-bold mb-4">{user.email} 회원님</h3>
       <div className="flex justify-between">
         <div>
@@ -46,8 +57,9 @@ const UserInfo = ({ user }) => {
         <DialogTrigger asChild>
           <Button className="w-full mt-4">캐시 충전</Button>
         </DialogTrigger>
-        <DialogContent className="w-72 p-4 z-50 bg-[#fff]">
-          <h4 className="text-lg font-bold mb-2">캐시 충전하기</h4>
+        <DialogContent className="w-72 p-4 z-50 bg-[#fff] rounded-lg">
+          <DialogTitle>캐시 충전하기</DialogTitle>
+          <DialogDescription>충전할 금액을 입력하세요.</DialogDescription>
           <input
             type="text"
             placeholder="충전할 금액 입력"
@@ -59,7 +71,9 @@ const UserInfo = ({ user }) => {
             <DialogClose asChild>
               <Button className="mr-2 h-10">취소</Button>
             </DialogClose>
-            <Button className="w-full h-10">캐시 충전</Button>
+            <Button className="w-full h-10" onClick={handleChargeCash}>
+              캐시 충전
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

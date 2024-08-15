@@ -13,10 +13,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 
-const Header = ({ openLogin }) => {
+const Header = ({ openLogin, onTabChange }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.auth.userData);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -34,6 +33,11 @@ const Header = ({ openLogin }) => {
 
   const handleMypageClick = () => {
     navigate("/mypage");
+  };
+  const handleDropdownSelect = (tabValue) => {
+    if (onTabChange) {
+      onTabChange(tabValue);
+    }
   };
 
   return (
@@ -61,18 +65,35 @@ const Header = ({ openLogin }) => {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="bg-white">
-                <DropdownMenuItem onClick={handleMypageClick}>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("회원 정보 수정")}
+                >
                   회원 정보 수정
                 </DropdownMenuItem>
-                <DropdownMenuItem>찜한 상품</DropdownMenuItem>
-                <DropdownMenuItem>캐시 충전</DropdownMenuItem>
-                <DropdownMenuItem>경매신청 내역</DropdownMenuItem>
-                <DropdownMenuItem>경매판매 내역</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("찜한 상품")}
+                >
+                  찜한 상품
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("캐시충전")}
+                >
+                  캐시 충전
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("경매신청 내역")}
+                >
+                  경매신청 내역
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDropdownSelect("경매판매 내역")}
+                >
+                  경매판매 내역
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Button onClick={handleLogout}>로그아웃</Button>
             <span>고객센터</span>
-
             <span>{user.email}</span>
           </>
         ) : (

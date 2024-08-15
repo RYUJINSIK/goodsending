@@ -9,18 +9,44 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import Login from "@/components/Login";
+import { getMyProducts } from "@/api/productApi";
+import ProductUploadForm from "@/components/ProductUpload/ProductUploadForm";
+import { useSelector } from "react-redux";
 
 const Main = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const token = useSelector((state) => state.auth.token);
+
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
+
+  const handleUploadSuccess = (newProduct) => {
+    setProducts((prevProducts) => [...prevProducts, newProduct]);
+
+    console.log("업로드된 상품", [...products, newProduct]);
+  };
+
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getMyProducts(token);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    if (token) {
+      fetchProducts();
+    }
     const shouldLoginModal = localStorage.getItem("showLoginModal");
     if (shouldLoginModal === "true") {
       openLogin();
       localStorage.removeItem("showLoginModal"); // 모달을 한 번만 표시하기 위해 삭제
     }
-  }, []);
+  }, [token]);
+
   const images = [
     "https://media.istockphoto.com/id/175194979/ko/사진/커요-늘이다.jpg?s=1024x1024&w=is&k=20&c=ytEWnY4uZNI7BXRdwSJiWAVD0hGz9u6CNB0zg0PsYPQ=",
     "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",
@@ -74,6 +100,7 @@ const Main = () => {
           />
         ))}
       </div>
+
       <div className="flex items-center justify-stretch mt-8 mb-4">
         <h2 className="text-2xl font-bold mx-4">전체 상품 보기</h2>
         <div className="relative w-64">
@@ -100,12 +127,20 @@ const Main = () => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {[...Array(20)].map((_, index) => (
+        {/* {[...Array(20)].map((_, index) => (
           <ProductCard
             key={index + 5}
             title={`매물 이름 ${index + 6}`}
             startingPrice={1200 + index * 300}
             imageUrl={images[index % images.length]}
+          />
+        ))} */}
+        {products.map((product, index) => (
+          <ProductCard
+            key={index}
+            title={product.name}
+            startingPrice={product.price}
+            imageUrl={product.imageUrl}
           />
         ))}
       </div>

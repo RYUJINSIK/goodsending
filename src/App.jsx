@@ -14,17 +14,25 @@ function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
+  const [activeTab, setActiveTab] = useState("찜한 상품");
+
+  const handleTabChange = (tabValue) => {
+    setActiveTab(tabValue);
+  };
   return (
     <div>
       {!hideHeaderPaths.includes(location.pathname) && (
-        <Header openLogin={openLogin} />
+        <Header openLogin={openLogin} onTabChange={handleTabChange} />
       )}
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
       <Routes>
         <Route path="signup" element={<SignUp />} />
         <Route path="/" element={<Main />} />
         <Route path="/product-upload" element={<ProductUpload />} />
-        <Route path="/mypage" element={<MyPage />} />
+        <Route
+          path="/mypage"
+          element={<MyPage onTabChange={handleTabChange} />}
+        />
       </Routes>
     </div>
   );

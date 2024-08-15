@@ -18,7 +18,8 @@ import { productUpload } from "@/api/productApi";
 import { useSelector } from "react-redux";
 
 const ProductUploadForm = () => {
-  const token = useSelector((state) => state.auth.token);
+  const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.access_token);
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
   const [totalFileSize, setTotalFileSize] = useState(0);
@@ -29,7 +30,6 @@ const ProductUploadForm = () => {
     new Date(new Date().setDate(new Date().getDate() + 1))
   );
   const [auctionTime, setAuctionTime] = useState("AFTERNOON");
-  const navigate = useNavigate();
 
   // 이미지 변경 핸들러
   const handleImageChange = (index, e) => {
@@ -81,7 +81,6 @@ const ProductUploadForm = () => {
       ? ""
       : new Intl.NumberFormat("ko-KR").format(numberValue);
   };
-
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,6 +110,9 @@ const ProductUploadForm = () => {
     try {
       const response = await productUpload(token, formData);
       console.log("Upload successful:", response.data);
+      // if (onUploadSuccess) {
+      //   onUploadSuccess();
+      // }
       navigate("/");
     } catch (error) {
       console.error("Upload failed:", error);
