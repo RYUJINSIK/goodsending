@@ -373,6 +373,7 @@ function ProductsDetail() {
                 isLoggedIn={isAuthenticated}
                 handleSendMessage={handleSendMessage}
                 productId={productInfo.productId}
+                productStatus={productInfo.status}
               />
               <div className="flex flex-row justify-between w-[450px] gap-3 mt-3">
                 <Button

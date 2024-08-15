@@ -1,21 +1,13 @@
-import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearToken } from "@/redux/modules/auth";
-import { logout, refreshAccessToken } from "@/api/userApi";
+import { logout } from "@/api/userApi";
 import { persistor } from "@/redux/config/configStore";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "./ui/button";
 
-const Header = ({ openLogin, onTabChange }) => {
+const Header = ({ openLogin }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userData);
@@ -35,10 +27,6 @@ const Header = ({ openLogin, onTabChange }) => {
       // Redux 상태와 localStorage를 초기화합니다.
       persistor.purge().then(() => {
         console.log("Purge completed");
-        // 필요한 경우 여기서 페이지를 새로고침하거나 로그인 페이지로 리다이렉트할 수 있습니다.
-        // window.location.reload();
-        // 또는
-        // navigate('/login');
       });
     } catch (error) {
       console.error("Logout failed:", error);
@@ -57,19 +45,14 @@ const Header = ({ openLogin, onTabChange }) => {
   const handleMypageClick = () => {
     navigate("/mypage");
   };
-  const handleDropdownSelect = (tabValue) => {
-    if (onTabChange) {
-      onTabChange(tabValue);
-    }
-  };
 
   return (
-    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50">
+    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4 bg-white z-50 h-24 border-b border-gray-100">
       <div className="flex items-center">
         <img
           src="../icon/LogoBlack.png"
           alt="logo"
-          className="h-8 cursor-pointer"
+          className="h-12 cursor-pointer"
           onClick={handleLogoClick}
         />
       </div>
@@ -77,60 +60,38 @@ const Header = ({ openLogin, onTabChange }) => {
       <nav className="flex items-center space-x-4">
         {isAuthenticated ? (
           <>
-            <Badge className="bg-green-200 text-green-800 px-2 py-1 rounded-full">
-              잔여 캐시: {user.cash === null ? 0 : user.cash}원
+            <Badge className="bg-primary text-white px-2 py-1 rounded-xl">
+              CASH :
+              {user.cash === null ? 0 : parseInt(user.cash).toLocaleString()}{" "}
+              <CircleDollarSign size={22} className="ml-1" />{" "}
             </Badge>
-            <button onClick={handleUploadClick}>판매/등록</button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger onClick={handleMypageClick}>
-                마이페이지
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("회원 정보 수정")}
-                >
-                  회원 정보 수정
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("찜한 상품")}
-                >
-                  찜한 상품
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("캐시충전")}
-                >
-                  캐시 충전
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("경매신청 내역")}
-                >
-                  경매신청 내역
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleDropdownSelect("경매판매 내역")}
-                >
-                  경매판매 내역
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button onClick={handleLogout}>로그아웃</Button>
-            <span>고객센터</span>
-            <span>{user.email}</span>
-          </>
-        ) : (
-          <>
-            <span>고객센터</span>
 
             <Button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              // onClick={() => setIsLogIn(true)}
-              onClick={openLogin}
+              onClick={handleUploadClick}
+              className="bg-white text-black hover:bg-slate-50 rounded-xl"
             >
-              로그인
+              판매/등록
+            </Button>
+            <Button
+              onClick={handleMypageClick}
+              className="bg-white text-black hover:bg-slate-100 rounded-xl"
+            >
+              마이페이지
+            </Button>
+            <Button
+              onClick={handleLogout}
+              className="bg-slate-200 text-black hover:bg-slate-800 hover:text-white rounded-xl"
+            >
+              로그아웃
             </Button>
           </>
+        ) : (
+          <Button
+            className="bg-blue-400 hover:bg-[#3B7DEC] text-white px-4 py-2 rounded-3xl"
+            onClick={openLogin}
+          >
+            로그인
+          </Button>
         )}
       </nav>
     </header>

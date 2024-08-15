@@ -9,7 +9,6 @@ export const productUpload = async (token, requestBody) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Error fetching user data:", error);

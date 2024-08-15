@@ -27,6 +27,7 @@ function LiveChat({
   isLoggedIn,
   handleSendMessage,
   productId,
+  productStatus,
 }) {
   const [inputValue, setInputValue] = useState("");
   const cardContentRef = useRef(null);
@@ -44,38 +45,36 @@ function LiveChat({
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.altKey && e.nativeEvent.isComposing === false) {
       e.preventDefault();
-      if (inputValue.trim()) {
-        handleSendMessage(inputValue);
-        setInputValue("");
-        scrollToBottom(true); // 강제로 스크롤 내림
-      }
+      sendMessage();
     }
   };
 
   const handleSendClick = () => {
+    sendMessage();
+  };
+
+  const sendMessage = () => {
     if (inputValue.trim()) {
       handleSendMessage(inputValue);
       setInputValue("");
-      scrollToBottom(true); // 강제로 스크롤 내림
+      scrollToBottom(true); // 새 메시지 전송 시 스크롤 하단으로 이동
     }
   };
 
   const handleScroll = async () => {
     if (cardContentRef.current.scrollTop === 0 && !loading) {
       setLoading(true);
-      await getChatMessage();
+      await getChatMessage(true); // 이전 메시지 로드 시 isLoadingPrevious를 true로 설정
       setLoading(false);
     }
   };
 
   const scrollToBottom = (force = false) => {
     if (cardContentRef.current) {
-      const scrollHeight = cardContentRef.current.scrollHeight;
-      const height = cardContentRef.current.clientHeight;
-      const maxScrollTop = scrollHeight - height;
-      const currentScrollTop = cardContentRef.current.scrollTop;
+      const { scrollHeight, clientHeight, scrollTop } = cardContentRef.current;
+      const maxScrollTop = scrollHeight - clientHeight;
 
-      if (force || currentScrollTop >= maxScrollTop - 100) {
+      if (force || scrollTop >= maxScrollTop - 100) {
         setTimeout(() => {
           if (cardContentRef.current) {
             cardContentRef.current.scrollTop =
@@ -88,17 +87,17 @@ function LiveChat({
 
   useEffect(() => {
     const loadMessages = async () => {
-      await getChatMessage();
+      await getChatMessage(false); // 초기 로딩 시에는 isLoadingPrevious를 false로 설정
       if (initialLoading) {
         scrollToBottom(true);
         setInitialLoading(false);
       }
     };
-
+    if (productStatus === "ENDED") setChatStatus(false);
     setTimeout(loadMessages, 1000);
   }, []);
 
-  const getChatMessage = async () => {
+  const getChatMessage = async (isLoadingPrevious = false) => {
     try {
       const response = await getLiveChat(productId, 15, cursorId);
       const sortedMessages = response.content.sort((a, b) => a.id - b.id);
@@ -107,24 +106,20 @@ function LiveChat({
         setCursorId(oldestNewMessageId);
 
         setMessages((prevMessages) => {
-          // 중복 메시지 제거
           const uniqueNewMessages = sortedMessages.filter(
             (newMsg) =>
               !prevMessages.some((prevMsg) => prevMsg.id === newMsg.id)
           );
           const newMessages = [...uniqueNewMessages, ...prevMessages];
 
-          // 스크롤 위치 조정
-          setTimeout(() => {
-            if (cardContentRef.current) {
-              const scrollHeight = cardContentRef.current.scrollHeight;
-              const oldScrollHeight =
-                scrollHeight - cardContentRef.current.clientHeight;
-              cardContentRef.current.scrollTop = scrollHeight - oldScrollHeight;
-            }
-          }, 0);
-
-          return newMessages;
+          if (isLoadingPrevious) {
+            // 이전 메시지를 불러올 때는 스크롤 위치 유지
+            return newMessages;
+          } else {
+            // 새 메시지를 받았을 때는 스크롤을 아래로 이동
+            scrollToBottom(true);
+            return newMessages;
+          }
         });
       }
     } catch (error) {
@@ -140,31 +135,36 @@ function LiveChat({
   useEffect(() => {
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      const isNewMessage = lastMessage.id !== prevLastMessageId.current;
 
-      if (isNewMessage) {
-        const isCurrentUser = lastMessage.memberId === user.memberId;
-        const isSystemMessage =
-          lastMessage.type === "BID" || lastMessage.type === "AUCTION_WINNER";
+      const isCurrentUser = lastMessage.memberId === user.memberId;
+      const isSystemMessage =
+        lastMessage.type === "BID" || lastMessage.type === "AUCTION_WINNER";
 
-        if (!isCurrentUser || isSystemMessage) {
-          scrollToBottom(true);
-        }
+      if (!isCurrentUser || isSystemMessage) {
+        scrollToBottom(true);
       }
 
       prevLastMessageId.current = lastMessage.id;
     }
-  }, [messages, user.memberId]);
 
-  useEffect(() => {
     const hasAuctionWinner = messages.some(
       (message) => message.type === "AUCTION_WINNER"
     );
     if (hasAuctionWinner) {
+      scrollToBottom(true);
       setChatStatus(false);
-      scrollToBottom();
     }
-  }, [messages]);
+  }, [messages, user.memberId]);
+
+  // useEffect(() => {
+  //   const hasAuctionWinner = messages.some(
+  //     (message) => message.type === "AUCTION_WINNER"
+  //   );
+  //   if (hasAuctionWinner) {
+  //     scrollToBottom(true);
+  //     setChatStatus(false);
+  //   }
+  // }, [messages]);
 
   return (
     <Card className="bg-white h-[535px] w-[450px] p-2 ">

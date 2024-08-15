@@ -37,7 +37,6 @@ instance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const newAccessToken = await refreshAccessToken();
-        console.log("New Token !! : ", newAccessToken.headers.access_token);
         store.dispatch(setToken(newAccessToken.headers.access_token)); // Redux 스토어에 저장
         originalRequest.headers.Access_Token = `Bearer ${newAccessToken.headers.access_token}`;
         return instance(originalRequest);

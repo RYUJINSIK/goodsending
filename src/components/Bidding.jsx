@@ -52,6 +52,9 @@ export function Bidding({ callPostBids, currentHighPrice, openLogin, status }) {
     if (status === "ENDED") {
       toast.error("이미 마감된 경매입니다.");
     }
+    if (status === "UPCOMING") {
+      toast.error("아직 경매시간이 아닙니다!");
+    }
     if (!isAuthenticated) {
       openLogin();
     }
@@ -88,7 +91,9 @@ export function Bidding({ callPostBids, currentHighPrice, openLogin, status }) {
             <div className="grid gap-2">
               <div className="grid grid-cols-2 items-center gap-4">
                 <Label htmlFor="cash">캐쉬 잔액</Label>
-                <span className="text-right text-sm">{cash} 원</span>
+                <span className="text-right text-sm">
+                  {parseInt(cash).toLocaleString()} 원
+                </span>
               </div>
               <div className="grid grid-cols-2 items-center gap-4">
                 <Label htmlFor="bidPrice">입찰 신청 금액</Label>

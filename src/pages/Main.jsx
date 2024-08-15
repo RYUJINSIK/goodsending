@@ -32,18 +32,6 @@ const Main = () => {
   const closeLogin = () => setIsLoginOpen(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getMyProducts(token);
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      }
-    };
-
-    if (token) {
-      fetchProducts();
-    }
     const shouldLoginModal = localStorage.getItem("showLoginModal");
     if (shouldLoginModal === "true") {
       openLogin();
@@ -117,8 +105,6 @@ const Main = () => {
         closedProduct
       );
       const newProducts = response.content;
-      console.log("newProducts ? ", newProducts);
-
       setProducts((prevProducts) =>
         isInitialSearch ? newProducts : [...prevProducts, ...newProducts]
       );
@@ -159,15 +145,13 @@ const Main = () => {
     const fetchData = async () => {
       const auctionTime = checkTime();
       setIsAcutionTime(auctionTime);
-      console.log("auctionTime ? : ", auctionTime);
       try {
         let result;
-        if (!auctionTime) {
+        if (auctionTime) {
           result = await getTOPBidProducts(); // 입찰순 API 호출
         } else {
           result = await getTOPLikeProducts(); // 좋아요순 API 호출
         }
-        console.log("TOP5 ? : ", result);
         setTopProducts(result);
       } catch (error) {
         console.error("Error fetching data:", error);
