@@ -342,7 +342,7 @@ const ChangePassword = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">비밀번호 변경</h2>
+      <h2 className="text-xl font-bold mb-6">비밀번호 변경</h2>
       <div className="flex flex-col h-full items-center">
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="flex mb-4 w-[80%]">
@@ -408,25 +408,26 @@ const ChangePassword = () => {
     </div>
   );
 };
-// 찜하기 토글
 
-const handleToggleLike = async (productId) => {
-  try {
-    await toggleLike(token, productId, false); // false로 설정하여 찜하기 취소
-    setProducts((prev) =>
-      prev.filter((product) => product.productId !== productId)
-    );
-  } catch (error) {
-    console.error("찜하기 상태 변경 중 오류 발생:", error);
-  }
-};
+// // 찜하기 토글
 
-const handleSort = (sortByValue) => {
-  setSortBy(sortByValue);
-  setIsAsc(!isAsc);
-  setPage(1);
-  setProducts([]);
-};
+// const handleToggleLike = async (productId) => {
+//   try {
+//     await toggleLike(token, productId, false); // false로 설정하여 찜하기 취소
+//     setProducts((prev) =>
+//       prev.filter((product) => product.productId !== productId)
+//     );
+//   } catch (error) {
+//     console.error("찜하기 상태 변경 중 오류 발생:", error);
+//   }
+// };
+
+// const handleSort = (sortByValue) => {
+//   setSortBy(sortByValue);
+//   setIsAsc(!isAsc);
+//   setPage(1);
+//   setProducts([]);
+// };
 
 // 찜한 상품 조회
 
@@ -485,7 +486,7 @@ const LikedProducts = () => {
   };
 
   return (
-    <Card className="w-[700px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
+    <Card className="h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
       <div className="sticky top-0 bg-white z-10 pt-6 px-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold mb-4">찜한 상품 목록</h2>
@@ -532,205 +533,42 @@ const LikedProducts = () => {
   );
 };
 
-// // 경매 신청 내역 조회, 거래 확정
-
-// const AuctionBid = () => {
-//   const [bidHistory, setBidHistory] = useState([]);
-//   const [page, setPage] = useState(0);
-//   const [size, setSize] = useState(15);
-//   const token = useSelector((state) => state.auth.access_token);
-//   const memberId = useSelector((state) => state.auth.userData.memberId);
-
-//   useEffect(() => {
-//     fetchBidHistory();
-//   }, []);
-
-//   const fetchBidHistory = async () => {
-//     try {
-//       const response = await getAuctionBid(token, memberId, page, size);
-//       if (response && Array.isArray(response.content)) {
-//         setBidHistory((prevHistory) => [...prevHistory, ...response.content]);
-//         setPage((prevPage) => prevPage + 1);
-//       }
-//     } catch (error) {
-//       console.error("경매 신청 내역 조회 중 오류 발생:", error);
-//     }
-//   };
-
-//   const handleConfirmOrder = async (orderId) => {
-//     try {
-//       await confirmOrder(token, orderId);
-//       fetchBidHistory();
-//     } catch (error) {
-//       console.error("주문 확인 중 오류 발생:", error);
-//     }
-//   };
-
-//   const handleUpdateDelivery = async (orderId) => {
-//     try {
-//       await updateDelivery(token, orderId);
-//       fetchBidHistory();
-//     } catch (error) {
-//       console.error("배송 정보 업데이트 중 오류 발생:", error);
-//     }
-//   };
-
-//   return (
-//     <Card className="w-[750px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white p-6">
-//       <h2 className="text-2xl font-bold mb-6">경매 신청 내역</h2>
-//       <div className="overflow-y-auto h-[calc(80vh-150px)]">
-//         {bidHistory.map((bid, index) => (
-//           <div key={index} className="border-b py-4">
-//             <h3 className="font-semibold">{bid.productName}</h3>
-//             <p>입찰가: {bid.bidPrice.toLocaleString()}원</p>
-//             <p>상태: {bid.status}</p>
-//             {bid.status === "DELIVERY_COMPLETED" && (
-//               <Button
-//                 onClick={() => handleConfirmOrder(bid.orderId)}
-//                 className="mt-2"
-//               >
-//                 거래 확정
-//               </Button>
-//             )}
-//             {bid.status === "PAYMENT_COMPLETED" && (
-//               <Button
-//                 onClick={() => handleUpdateDelivery(bid.orderId)}
-//                 className="mt-2"
-//               >
-//                 배송 시작
-//               </Button>
-//             )}
-//           </div>
-//         ))}
-//       </div>
-//       {bidHistory.length > 0 && bidHistory.length % size === 0 && (
-//         <Button onClick={fetchBidHistory} className="mt-4">
-//           더 보기
-//         </Button>
-//       )}
-//     </Card>
-//   );
-// };
-
-// 수신자 정보
-const ReceiverInfoForm = () => {
-  const [receiverInfo, setReceiverInfo] = useState({
-    receiverName: "",
-    receiverCellNumber: "",
-    receiverAddress: "",
-  });
-  const [message, setMessage] = useState("");
-  const token = useSelector((state) => state.auth.access_token);
-  const orderId = useSelector((state) => state.auth.userData?.memberId);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "receiverCellNumber") {
-      // 숫자만 허용하고 자동으로 하이픈 추가
-      const numericValue = value.replace(/[^0-9]/g, "");
-      const formattedValue = formatPhoneNumber(numericValue);
-      setReceiverInfo((prev) => ({ ...prev, [name]: formattedValue }));
-    } else {
-      setReceiverInfo((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  // 전화번호 형식화 함수
-  const formatPhoneNumber = (value) => {
-    if (value.length <= 3) return value;
-    if (value.length <= 7) return `${value.slice(0, 3)}-${value.slice(3)}`;
-    return `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateReceiverInfo(token, orderId, receiverInfo);
-      setMessage("배송지 정보가 성공적으로 업데이트되었습니다.");
-    } catch (error) {
-      setMessage("배송지 정보 업데이트에 실패했습니다. 다시 시도해주세요.");
-    }
-  };
-
-  return (
-    <Card className="w-[650px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white p-6">
-      <h2 className="text-2xl font-bold mb-6">수신자 정보 관리</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-2">수신자 이름</label>
-          <Input
-            type="text"
-            name="receiverName"
-            value={receiverInfo.receiverName}
-            onChange={handleInputChange}
-            placeholder="이름을 입력하세요"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">수신자 휴대번호</label>
-          <Input
-            type="tel"
-            name="receiverCellNumber"
-            value={receiverInfo.receiverCellNumber}
-            onChange={handleInputChange}
-            pattern="[0-9]{3}-[0-9]{3,4}-[0-9]{4}"
-            placeholder="하이픈을 제외한 숫자만 입력하세요"
-            maxLength={13}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">수신자 주소</label>
-          <Input
-            type="text"
-            name="receiverAddress"
-            value={receiverInfo.receiverAddress}
-            onChange={handleInputChange}
-            placeholder="주소를 입력하세요"
-            required
-          />
-        </div>
-        <div className="flex justify-center mt-6">
-          <Button type="submit">수신자 정보 저장</Button>
-        </div>
-      </form>
-      {message && <p className="mt-4 text-center">{message}</p>}
-    </Card>
-  );
-};
-
 // 마이페이지 컴포넌트
 const MyPage = () => {
   const user = useSelector((state) => state.auth.userData);
   const [activeTab, setActiveTab] = useState("찜한 상품");
-  const [content, setContent] = useState([]);
+  const [likedProductsCount, setLikedProductsCount] = useState(0);
+  const [auctionBidCount, setAuctionBidCount] = useState(0);
+  const [auctionSaleCount, setAuctionSaleCount] = useState(0);
+  const [myProductsCount, setMyProductsCount] = useState(0);
   const token = useSelector((state) => state.auth.access_token);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await getMyProducts(token);
-      if (response && Array.isArray(response.content)) {
-        setContent(response.content);
-      } else {
-        console.error(
-          "API response does not contain a valid content array:",
-          response
-        );
-        setContent([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch products:", error);
-    }
-  };
 
   const handleTabChange = (tabValue) => {
     setActiveTab(tabValue);
   };
+  const fetchLikedProducts = async () => {};
+  const fetchAuctionBids = async () => {};
+  const fetchAuctionSales = async () => {};
+  const fetchMyProducts = async () => {
+    try {
+      const response = await getMyProducts(token);
+      if (response && Array.isArray(response.content)) {
+        setMyProductsCount(response.content.length);
+      } else {
+        setMyProductsCount(0);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      setMyProductsCount(0);
+    }
+  };
 
   useEffect(() => {
     if (token) {
-      fetchProducts(); // 마운트 시 상품 목록 가져오기
+      fetchLikedProducts();
+      fetchAuctionBids();
+      fetchAuctionSales();
+      fetchMyProducts();
     }
   }, [token]);
 
@@ -748,22 +586,22 @@ const MyPage = () => {
               <Card className="w-[300px] h-auto mb-6 bg-white">
                 <TabsList className="flex flex-col items-stretch h-auto">
                   {[
-                    "찜한 상품",
-                    "경매 신청 내역",
-                    "경매 판매 내역",
-                    "판매 상품 관리",
+                    { name: "찜한 상품", count: likedProductsCount },
+                    { name: "경매 신청 내역", count: auctionBidCount },
+                    { name: "경매 판매 내역", count: auctionSaleCount },
+                    { name: "판매 상품 관리", count: myProductsCount },
                   ].map((tab) => (
                     <TabsTrigger
-                      key={tab}
-                      value={tab}
+                      key={tab.name}
+                      value={tab.name}
                       className={`justify-between h-16 ${
-                        activeTab === tab
+                        activeTab === tab.name
                           ? "text-blue-600 font-bold"
                           : "text-gray-800"
                       }`}
                     >
-                      <span>{tab}</span>
-                      {content.length > 0 && <span>{content.length}</span>}
+                      <span>{tab.name}</span>
+                      {tab.count > 0 && <span>{tab.count}</span>}{" "}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -786,7 +624,7 @@ const MyPage = () => {
                 </TabsList>
               </Card>
             </div>
-            <div className="w-[800px] h-auto">
+            <div className="w-[750px] h-auto">
               <div className="h-full flex flex-col">
                 <TabsContent value="찜한 상품">
                   <LikedProducts />
@@ -801,15 +639,12 @@ const MyPage = () => {
                   <ContentArea
                     tabValue="판매 상품 관리"
                     content={[]}
-                    onUploadSuccess={fetchProducts}
+                    onUploadSuccess={fetchMyProducts}
                   />
                 </TabsContent>
                 <TabsContent value="개인정보 수정">
-                  <UserInfoContent className="w-[700px]" />
+                  <UserInfoContent />
                 </TabsContent>
-                {/* <TabsContent value="배송지 관리">
-                  <ReceiverInfoForm />
-                </TabsContent> */}
               </div>
             </div>
           </Tabs>

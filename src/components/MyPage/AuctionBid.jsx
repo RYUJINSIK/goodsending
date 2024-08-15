@@ -9,28 +9,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { updateReceiverInfo } from "@/api/productApi";
+import { getAuctionBid, updateReceiverInfo } from "@/api/productApi";
 
 const AuctionBid = () => {
   const [successfulAuctions, setSuccessfulAuctions] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
   const token = useSelector((state) => state.auth.access_token);
+  const memberId = useSelector((state) => state.auth.memberId);
 
   useEffect(() => {
-    const fetchSuccessfulAuctions = async () => {
+    const fetchAuctionBids = async () => {
       try {
-        const response = await axios.get("/api/successful-auctions", {
-          headers: { Access_Token: `Bearer ${token}` },
-        });
-        setSuccessfulAuctions(response.data);
+        const data = await getAuctionBid(token, memberId, page, size);
+        setSuccessfulAuctions(data.content);
       } catch (error) {
-        console.error("낙찰된 상품 목록 조회 실패:", error);
+        console.error("경매 신청 내역 조회 실패:", error);
       }
     };
 
-    fetchSuccessfulAuctions();
-  }, [token]);
+    fetchAuctionBids();
+  }, [token, memberId, page, size]);
 
   const SuccessfulAuctionItem = ({ auction, onUpdateShipping }) => (
     <Card className="p-4 mb-4">
@@ -135,7 +136,7 @@ const AuctionBid = () => {
 
   return (
     <Card className="w-[750px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white p-6">
-      <h2 className="text-2xl font-bold mb-6">경매 신청 내역</h2>
+      <h2 className="text-2xl font-bold mb-6"></h2>
       <div className="overflow-y-auto h-[calc(80vh-150px)]">
         {successfulAuctions.map((auction) => (
           <SuccessfulAuctionItem
