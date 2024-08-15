@@ -125,6 +125,16 @@ function LiveChat({
       >
         {initialLoading || loading ? (
           <Loading />
+        ) : messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <Trophy className="h-12 w-12 text-primary mb-4" />
+            <p className="text-lg font-semibold text-gray-700 mb-2">
+              채팅방에 오신 것을 환영합니다!
+            </p>
+            <p className="text-sm text-gray-500 text-center">
+              첫 메시지를 보내 경매에 대해 이야기를 나눠보세요.
+            </p>
+          </div>
         ) : (
           <div className="flex flex-col space-y-2">
             {messages.map((message, index) => {

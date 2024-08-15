@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useFormatPrice } from "@/hooks/useFormatPrice";
 
 function formatAuctionTime(startDateTime) {
   const startDate = new Date(startDateTime);
@@ -69,7 +70,7 @@ function ProductCard({ product }) {
       <CardContent className="p-4 text-left">
         <p className="font-bold text-lg mb-2">{product.name}</p>
         <p className="text-gray-500 text-xs">경매 시작가</p>
-        <p className="font-bold text-sm">{product.price}원</p>
+        <p className="font-bold text-sm">{useFormatPrice(product.price)}원</p>
         <p className="text-gray-500 mt-1 text-xs">
           {formatAuctionTime(product.startDateTime)}
         </p>
