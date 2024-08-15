@@ -7,6 +7,9 @@ import SignUp from "./pages/SignUp";
 import Login from "./components/Login";
 import ProductUpload from "./pages/ProductUpload";
 import MyPage from "./pages/MyPage";
+import ProductsDetail from "./pages/ProductsDetail";
+import PrivateRoute from "./components/PrivateRoute";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const location = useLocation();
@@ -28,12 +31,17 @@ function App() {
       <Routes>
         <Route path="signup" element={<SignUp />} />
         <Route path="/" element={<Main />} />
-        <Route path="/product-upload" element={<ProductUpload />} />
-        <Route
+        <Route element={<PrivateRoute />}>
+          <Route path="/product-upload" element={<ProductUpload />} />
+          <Route path="/product" element={<ProductsDetail />} />
+            <Route
           path="/mypage"
           element={<MyPage onTabChange={handleTabChange} />}
         />
+        </Route>
+        <Route path="/product/:id" element={<ProductsDetail />} />
       </Routes>
+      <Toaster />
     </div>
   );
 }

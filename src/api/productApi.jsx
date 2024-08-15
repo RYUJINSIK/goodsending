@@ -36,9 +36,7 @@ export const getMyProducts = async (token, params) => {
 };
 
 // 경매 상품 상세 조회
-
 export const productDetails = async (productId) => {
-  console.log("🔗", productId);
   try {
     const response = await axios.get(`/api/products/${productId}`);
     return response.data;
@@ -49,7 +47,6 @@ export const productDetails = async (productId) => {
 };
 
 // 상품 수정
-
 export const editProduct = async (token, productId, requestBody) => {
   try {
     const response = await axios.put(
@@ -66,12 +63,23 @@ export const editProduct = async (token, productId, requestBody) => {
     return response.data;
   } catch (error) {
     console.error("Error editing product:", error);
+
+    export const postBids = async (token, requestBody) => {
+  try {
+    const response = await axios.post(`/api/bids`, requestBody, {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
     throw error;
   }
 };
 
 // 상품 삭제
-
 export const deleteProduct = async (token, productId) => {
   try {
     const response = await axios.delete(`/api/products/${productId}`, {
@@ -144,6 +152,18 @@ export const chargeCash = async (token, memberId, cash) => {
     return response.data;
   } catch (error) {
     console.error("Error cahrging cash", error);
+
+export const toggleLikes = async (token, requestBody) => {
+  try {
+    const response = await axios.post(`/api/likes/redis`, requestBody, {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
     throw error;
   }
 };
@@ -182,6 +202,17 @@ export const confirmOrder = async (token, orderId) => {
     return response.data;
   } catch (error) {
     console.error("주문 확인 중 오류 발생:", error);
+export const getLiveChat = async (productId, size, cursorId) => {
+  try {
+    const url = `/api/product-message-histories?productId=${productId}&size=${size}${
+      cursorId ? `&cursorId=${cursorId}` : ""
+    }`;
+
+    const response = await axios.get(url);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };
@@ -202,26 +233,34 @@ export const getAuctionBid = async (token, memberId, page = 0, size = 15) => {
     return response.data;
   } catch (error) {
     console.error("경매 신청 내역 조회 중 오류 발생:", error);
+export const getProducts = async (
+  cursor,
+  searchTerm,
+  openProduct,
+  closedProduct
+) => {
+  try {
+    const url = `/api/products?size=20${
+      cursor.id
+        ? `&cursorId=${cursor.id}&cursorStatus=${cursor.status}&cursorStartDateTime=${cursor.startDateTime}`
+        : ""
+    }${
+      searchTerm !== "" ? `&keyword=${searchTerm}` : ""
+    }&openProduct=${openProduct}&closedProduct=${closedProduct}`;
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };
 
-// 찜하기 기능
-export const toggleLike = async (token, productId, press) => {
+export const getTOPLikeProducts = async () => {
   try {
-    const response = await axios.post(
-      `/api/likes`,
-      { productId, press },
-      {
-        headers: {
-          Access_Token: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await axios.get("/api/likes/redis");
     return response.data;
   } catch (error) {
-    console.error("상품 찜하기/취소 중 오류 발생:", error);
+    console.log(error);
     throw error;
   }
 };
@@ -243,6 +282,12 @@ export const getLikedProducts = async (token, page, size, sortBy, isAsc) => {
     return response.data;
   } catch (error) {
     console.error("찜한 상품 목록 조회 중 오류 발생:", error);
+export const getTOPBidProducts = async () => {
+  try {
+    const response = await axios.get("/api/products/top5/bidderCount");
+    return response.data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };

@@ -57,3 +57,47 @@ export const signup = async (requestBody) => {
     throw error;
   }
 };
+
+export const logout = async (token) => {
+  try {
+    const response = await axios.delete(`/api/members/logout`, {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+// 액세스 토큰 갱신 함수
+export const refreshAccessToken = async () => {
+  try {
+    const response = await axios.post("/api/members/tokenReissue", {
+      withCredentials: true,
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error("Failed to refresh access token:", error);
+    throw error;
+  }
+};
+
+// 엑세스 토큰 유효성 체크
+export const accessTokenCheck = async (token) => {
+  try {
+    const response = await axios.get("/api/members/validateAccessToken", {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to access token verification:", error);
+    throw error;
+  }
+};

@@ -11,7 +11,7 @@ module.exports = {
           dark: "#2779bd",
         },
         secondary: {
-          DEFAULT: "#ffed4a",
+          DEFAULT: "#ad7dff",
           light: "#fff382",
           dark: "#e3ac00",
         },
@@ -25,8 +25,9 @@ module.exports = {
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "spin-slow": "spin 5s linear infinite",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
