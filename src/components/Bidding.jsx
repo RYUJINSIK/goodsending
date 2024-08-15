@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/popover";
 import { useSelector } from "react-redux";
 import { CircleDollarSign } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export function Bidding({ callPostBids, currentHighPrice, openLogin }) {
+export function Bidding({ callPostBids, currentHighPrice, openLogin, status }) {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const [cash, setCash] = useState(0);
   const [bidPrice, setBidPrice] = useState(currentHighPrice);
@@ -47,6 +49,9 @@ export function Bidding({ callPostBids, currentHighPrice, openLogin }) {
   };
 
   const handleButtonClick = () => {
+    if (status === "ENDED") {
+      toast.error("이미 마감된 경매입니다.");
+    }
     if (!isAuthenticated) {
       openLogin();
     }
@@ -55,7 +60,7 @@ export function Bidding({ callPostBids, currentHighPrice, openLogin }) {
   return (
     <Popover
       className="fixed"
-      open={isAuthenticated && isPopoverOpen}
+      open={status === "ONGOING" && isAuthenticated && isPopoverOpen}
       onOpenChange={(open) => isAuthenticated && setIsPopoverOpen(open)}
     >
       <PopoverTrigger asChild>
@@ -106,6 +111,8 @@ export function Bidding({ callPostBids, currentHighPrice, openLogin }) {
           </div>
         </PopoverContent>
       )}
+
+      <ToastContainer position="top-center" autoClose={3000} />
     </Popover>
   );
 }

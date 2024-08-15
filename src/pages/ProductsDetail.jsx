@@ -143,7 +143,7 @@ function ProductsDetail() {
         console.log("Bid placed successfully:", response);
         updateUserInfo();
       } catch (error) {
-        alert(error.response.data.message); // 현재 최고 입찰 금액이 입력한 금액보다 큽니다.
+        toast.error(error.response.data.message); // ex ) 현재 최고 입찰 금액이 입력한 금액보다 큽니다.
         console.error("Bidding failed:", error);
       }
     },
@@ -387,6 +387,7 @@ function ProductsDetail() {
                   callPostBids={callPostBids}
                   currentHighPrice={price}
                   openLogin={openLogin}
+                  status={productInfo.status}
                 />
               </div>
               {productInfo && (
@@ -395,7 +396,9 @@ function ProductsDetail() {
                     <p className="text-xl font-semibold text-center w-full bg-white p-3 rounded-lg border border-primary">
                       {renderPriceLabel()}:{" "}
                       <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4 ">
-                        {auctionStatus === "ENDED" ? productInfo.status : price}
+                        {productInfo.status === "ENDED"
+                          ? productInfo.finalPrice
+                          : price}
                         원
                       </span>
                     </p>

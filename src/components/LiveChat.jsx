@@ -35,6 +35,7 @@ function LiveChat({
   const [initialLoading, setInitialLoading] = useState(true);
   const [chatStatus, setChatStatus] = useState(true);
   const user = useSelector((state) => state.auth.userData);
+  const prevLastMessageId = useRef(null);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -72,8 +73,9 @@ function LiveChat({
       const scrollHeight = cardContentRef.current.scrollHeight;
       const height = cardContentRef.current.clientHeight;
       const maxScrollTop = scrollHeight - height;
+      const currentScrollTop = cardContentRef.current.scrollTop;
 
-      if (force || cardContentRef.current.scrollTop >= maxScrollTop - 100) {
+      if (force || currentScrollTop >= maxScrollTop - 100) {
         setTimeout(() => {
           if (cardContentRef.current) {
             cardContentRef.current.scrollTop =
@@ -100,28 +102,33 @@ function LiveChat({
     try {
       const response = await getLiveChat(productId, 15, cursorId);
       const sortedMessages = response.content.sort((a, b) => a.id - b.id);
+      if (sortedMessages.length > 0) {
+        const oldestNewMessageId = sortedMessages[0].id;
+        setCursorId(oldestNewMessageId);
 
-      if (response.content.length > 0) {
-        setCursorId(response.content[0].id);
+        setMessages((prevMessages) => {
+          // 중복 메시지 제거
+          const uniqueNewMessages = sortedMessages.filter(
+            (newMsg) =>
+              !prevMessages.some((prevMsg) => prevMsg.id === newMsg.id)
+          );
+          const newMessages = [...uniqueNewMessages, ...prevMessages];
+
+          // 스크롤 위치 조정
+          setTimeout(() => {
+            if (cardContentRef.current) {
+              const scrollHeight = cardContentRef.current.scrollHeight;
+              const oldScrollHeight =
+                scrollHeight - cardContentRef.current.clientHeight;
+              cardContentRef.current.scrollTop = scrollHeight - oldScrollHeight;
+            }
+          }, 0);
+
+          return newMessages;
+        });
       }
-
-      setMessages((prevMessages) => {
-        const newMessages = [...sortedMessages, ...prevMessages];
-
-        // 새 메시지가 추가된 후 스크롤 위치 조정
-        setTimeout(() => {
-          if (cardContentRef.current) {
-            const scrollHeight = cardContentRef.current.scrollHeight;
-            const oldScrollHeight =
-              scrollHeight - cardContentRef.current.clientHeight;
-            cardContentRef.current.scrollTop = scrollHeight - oldScrollHeight;
-          }
-        }, 0);
-
-        return newMessages;
-      });
     } catch (error) {
-      console.error("Failed to fetch product details:", error);
+      console.error("Failed to fetch chat messages:", error);
     }
   };
 
@@ -129,6 +136,25 @@ function LiveChat({
     const date = new Date(dateTime);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      const isNewMessage = lastMessage.id !== prevLastMessageId.current;
+
+      if (isNewMessage) {
+        const isCurrentUser = lastMessage.memberId === user.memberId;
+        const isSystemMessage =
+          lastMessage.type === "BID" || lastMessage.type === "AUCTION_WINNER";
+
+        if (!isCurrentUser || isSystemMessage) {
+          scrollToBottom(true);
+        }
+      }
+
+      prevLastMessageId.current = lastMessage.id;
+    }
+  }, [messages, user.memberId]);
 
   useEffect(() => {
     const hasAuctionWinner = messages.some(
