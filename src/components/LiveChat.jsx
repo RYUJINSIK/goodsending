@@ -9,7 +9,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BellRing, Send, Trophy, PartyPopper } from "lucide-react";
+import {
+  BellRing,
+  Send,
+  Trophy,
+  PartyPopper,
+  MessagesSquare,
+} from "lucide-react";
 import { getLiveChat } from "@/api/productApi";
 import { useSelector } from "react-redux";
 import Loading from "./Loading";
@@ -127,7 +133,7 @@ function LiveChat({
           <Loading />
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <Trophy className="h-12 w-12 text-primary mb-4" />
+            <MessagesSquare className="h-12 w-12 text-primary mb-4" />
             <p className="text-lg font-semibold text-gray-700 mb-2">
               채팅방에 오신 것을 환영합니다!
             </p>
@@ -173,7 +179,7 @@ function LiveChat({
                   key={index}
                   className={`flex ${
                     message.type === "BID"
-                      ? "justify-center "
+                      ? "justify-center"
                       : message.type === "GENERAL_CHAT" && isCurrentUser
                       ? "justify-end"
                       : "justify-start"
@@ -187,7 +193,11 @@ function LiveChat({
                   <Badge
                     variant={message.type === "BID" ? "outline" : "default"}
                     className={`px-2 py-1 rounded-full ${
-                      message.type === "BID" ? "text-black" : "text-white"
+                      message.type === "BID"
+                        ? "text-black"
+                        : isCurrentUser
+                        ? "bg-blue-200 text-blue-600"
+                        : "bg-blue-500 text-white"
                     }`}
                   >
                     {message.type === "BID" ? (
