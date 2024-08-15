@@ -27,15 +27,38 @@ import { useSelector } from "react-redux";
 const Main = () => {
   const token = useSelector((state) => state.auth.access_token);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const token = useSelector((state) => state.auth.token);
+
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
+
+  const handleUploadSuccess = (newProduct) => {
+    setProducts((prevProducts) => [...prevProducts, newProduct]);
+
+    console.log("업로드된 상품", [...products, newProduct]);
+  };
+
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getMyProducts(token);
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    if (token) {
+      fetchProducts();
+    }
     const shouldLoginModal = localStorage.getItem("showLoginModal");
     if (shouldLoginModal === "true") {
       openLogin();
       localStorage.removeItem("showLoginModal"); // 모달을 한 번만 표시하기 위해 삭제
     }
-  }, []);
+  }, [token]);
+
   const images = [
     "../icon/banner1.png",
     "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",

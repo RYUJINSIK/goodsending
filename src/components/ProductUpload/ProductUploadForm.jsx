@@ -20,6 +20,7 @@ import { getUserInfo } from "@/api/userApi";
 import { useDispatch } from "react-redux";
 import { setUserData } from "@/redux/modules/auth";
 const ProductUploadForm = () => {
+  const navigate = useNavigate();
   const token = useSelector((state) => state.auth.access_token);
   const dispatch = useDispatch();
   // 상태 관리를 위한 useState 훅
@@ -32,7 +33,6 @@ const ProductUploadForm = () => {
     new Date(new Date().setDate(new Date().getDate() + 1))
   );
   const [auctionTime, setAuctionTime] = useState("AFTERNOON");
-  const navigate = useNavigate();
 
   // 이미지 변경 핸들러
   const handleImageChange = (index, e) => {
@@ -84,7 +84,6 @@ const ProductUploadForm = () => {
       ? ""
       : new Intl.NumberFormat("ko-KR").format(numberValue);
   };
-
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();

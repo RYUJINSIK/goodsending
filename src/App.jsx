@@ -6,6 +6,7 @@ import Main from "./pages/Main";
 import SignUp from "./pages/SignUp";
 import Login from "./components/Login";
 import ProductUpload from "./pages/ProductUpload";
+import MyPage from "./pages/MyPage";
 import ProductsDetail from "./pages/ProductsDetail";
 import PrivateRoute from "./components/PrivateRoute";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,10 +17,15 @@ function App() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
+  const [activeTab, setActiveTab] = useState("찜한 상품");
+
+  const handleTabChange = (tabValue) => {
+    setActiveTab(tabValue);
+  };
   return (
     <div>
       {!hideHeaderPaths.includes(location.pathname) && (
-        <Header openLogin={openLogin} />
+        <Header openLogin={openLogin} onTabChange={handleTabChange} />
       )}
       <Login isOpen={isLoginOpen} onClose={closeLogin} />
       <Routes>
@@ -28,6 +34,10 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/product-upload" element={<ProductUpload />} />
           <Route path="/product" element={<ProductsDetail />} />
+            <Route
+          path="/mypage"
+          element={<MyPage onTabChange={handleTabChange} />}
+        />
         </Route>
         <Route path="/product/:id" element={<ProductsDetail />} />
       </Routes>
