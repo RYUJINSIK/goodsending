@@ -63,8 +63,10 @@ export const editProduct = async (token, productId, requestBody) => {
     return response.data;
   } catch (error) {
     console.error("Error editing product:", error);
+  }
+};
 
-    export const postBids = async (token, requestBody) => {
+export const postBids = async (token, requestBody) => {
   try {
     const response = await axios.post(`/api/bids`, requestBody, {
       headers: {
@@ -152,6 +154,8 @@ export const chargeCash = async (token, memberId, cash) => {
     return response.data;
   } catch (error) {
     console.error("Error cahrging cash", error);
+  }
+};
 
 export const toggleLikes = async (token, requestBody) => {
   try {
@@ -202,6 +206,8 @@ export const confirmOrder = async (token, orderId) => {
     return response.data;
   } catch (error) {
     console.error("주문 확인 중 오류 발생:", error);
+  }
+};
 export const getLiveChat = async (productId, size, cursorId) => {
   try {
     const url = `/api/product-message-histories?productId=${productId}&size=${size}${
@@ -233,6 +239,8 @@ export const getAuctionBid = async (token, memberId, page = 0, size = 15) => {
     return response.data;
   } catch (error) {
     console.error("경매 신청 내역 조회 중 오류 발생:", error);
+  }
+};
 export const getProducts = async (
   cursor,
   searchTerm,
@@ -282,6 +290,8 @@ export const getLikedProducts = async (token, page, size, sortBy, isAsc) => {
     return response.data;
   } catch (error) {
     console.error("찜한 상품 목록 조회 중 오류 발생:", error);
+  }
+};
 export const getTOPBidProducts = async () => {
   try {
     const response = await axios.get("/api/products/top5/bidderCount");

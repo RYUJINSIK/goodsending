@@ -29,7 +29,7 @@ import {
   updateReceiverInfo,
   confirmOrder,
   getLikedProducts,
-  toggleLike,
+  toggleLikes,
 } from "@/api/productApi";
 
 // 상품 아이템 컴포넌트
@@ -466,8 +466,12 @@ const LikedProducts = () => {
   };
 
   const handleToggleLike = async (productId) => {
+    const requestBody = {
+      productId: productId,
+      press: false,
+    };
     try {
-      await toggleLike(token, productId);
+      await toggleLikes(token, requestBody);
       setProducts((prev) =>
         prev.filter((product) => product.productId !== productId)
       );

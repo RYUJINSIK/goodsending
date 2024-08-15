@@ -27,17 +27,9 @@ import { useSelector } from "react-redux";
 const Main = () => {
   const token = useSelector((state) => state.auth.access_token);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const token = useSelector((state) => state.auth.token);
 
   const openLogin = () => setIsLoginOpen(true);
   const closeLogin = () => setIsLoginOpen(false);
-
-  const handleUploadSuccess = (newProduct) => {
-    setProducts((prevProducts) => [...prevProducts, newProduct]);
-
-    console.log("업로드된 상품", [...products, newProduct]);
-  };
 
   useEffect(() => {
     const fetchProducts = async () => {
