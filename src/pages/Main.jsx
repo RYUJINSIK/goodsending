@@ -162,7 +162,7 @@ const Main = () => {
       console.log("auctionTime ? : ", auctionTime);
       try {
         let result;
-        if (auctionTime) {
+        if (!auctionTime) {
           result = await getTOPBidProducts(); // 입찰순 API 호출
         } else {
           result = await getTOPLikeProducts(); // 좋아요순 API 호출

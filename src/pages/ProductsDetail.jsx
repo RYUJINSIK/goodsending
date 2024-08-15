@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+// import { useFormatPrice } from "@/hooks/useFormatPrice";
 import { productDetails, postBids, toggleLikes } from "@/api/productApi";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -397,8 +398,8 @@ function ProductsDetail() {
                       {renderPriceLabel()}:{" "}
                       <span className="underline decoration-primary decoration-wavy decoration-2 underline-offset-4 ">
                         {productInfo.status === "ENDED"
-                          ? productInfo.finalPrice
-                          : price}
+                          ? parseInt(productInfo.finalPrice).toLocaleString()
+                          : parseInt(price).toLocaleString()}
                         원
                       </span>
                     </p>

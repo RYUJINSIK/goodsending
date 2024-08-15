@@ -265,7 +265,8 @@ export const getProducts = async (
 
 export const getTOPLikeProducts = async () => {
   try {
-    const response = await axios.get("/api/likes/redis");
+    // const response = await axios.get("/api/likes/redis");
+    const response = await axios.get("/api/likes/top5 ");
     return response.data;
   } catch (error) {
     console.log(error);
