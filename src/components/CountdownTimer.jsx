@@ -23,21 +23,22 @@ const CountdownTimer = ({
     }
 
     if (callerComponent === "SignUp") {
-      return { minutes: 5, seconds: 0 };
-    } else {
-      const endTime = new Date(endDateTime).getTime();
-      const now = new Date().getTime();
-      const difference = endTime - now;
+      return { hours: 0, minutes: 5, seconds: 0 };
+    }
 
-      if (difference > 0) {
-        return {
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        };
-      } else {
-        return { hours: 0, minutes: 0, seconds: 0 };
-      }
+    // If we reach here, it means remainingExpiration was not valid or not provided
+    const endTime = new Date(endDateTime).getTime();
+    const now = new Date().getTime();
+    const difference = endTime - now;
+
+    if (difference > 0) {
+      return {
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    } else {
+      return { hours: 0, minutes: 0, seconds: 0 };
     }
   }
 

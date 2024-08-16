@@ -15,6 +15,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ImageUpload from "./ImageUpload";
 import { productUpload } from "@/api/productApi";
+import { useDispatch } from "react-redux";
+import { getUserInfo } from "@/api/userApi";
+import { setUserData } from "@/redux/modules/auth";
 import { useSelector } from "react-redux";
 import {
   AlertCircleIcon,
@@ -31,6 +34,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const ProductUploadForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.access_token);
   // 상태 관리를 위한 useState 훅
   const [images, setImages] = useState(Array(5).fill(null));
@@ -144,10 +148,20 @@ const ProductUploadForm = () => {
 
     try {
       const response = await productUpload(token, formData);
-      toast.success("상품 판매 등록이 완료되었습니다 !");
+      alert("상품 등록이 완료되었습니다 !");
+      updateUserInfo();
       navigate("/");
     } catch (error) {
       console.error("Upload failed:", error);
+    }
+  };
+
+  const updateUserInfo = async () => {
+    try {
+      const userData = await getUserInfo(token);
+      dispatch(setUserData(userData.data));
+    } catch (error) {
+      console.log(error);
     }
   };
 

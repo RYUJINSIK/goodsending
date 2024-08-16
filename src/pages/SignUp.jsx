@@ -7,12 +7,13 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Info } from "lucide-react";
 import CountdownTimer from "@/components/CountdownTimer";
 import { getEmailCode, codeCheck, signup } from "@/api/userApi";
 import JSConfetti from "js-confetti";
 import Welcome from "@/components/Welcome";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -27,6 +28,7 @@ function SignUp() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [mailText, setMailText] = useState("인증번호 받기");
   const [timerReset, setTimerReset] = useState(0);
+  const [showSpamAlert, setShowSpamAlert] = useState(false);
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,6 +51,7 @@ function SignUp() {
         setMailError("");
         setIsTimerActive(true);
         setTimerReset((prevKey) => prevKey + 1);
+        setShowSpamAlert(true); // 스팸 알림 표시
       } catch (error) {
         if (error.request.status === 409) {
           setMailError("해당 메일로 가입된 계정이 존재합니다.");
@@ -147,7 +150,7 @@ function SignUp() {
   const errorStyle = "flex w-full max-w-sm items-start text-sm text-primary";
   return (
     <div className="flex flex-col items-center w-full">
-      <Card className="p-8 w-[400px]">
+      <Card className="p-8 w-[450px]">
         <div className="flex flex-col items-center justify-center">
           <img src="../icon/LogoBlue.png" alt="logo" className="h-20 mb-10" />
         </div>
@@ -169,6 +172,16 @@ function SignUp() {
           </Button>
         </div>
         {mailError && <p className={errorStyle}>{mailError}</p>}
+
+        {showSpamAlert && (
+          <Alert className="mt-2 mb-4 bg-blue-50 text-blue-600 border-blue-200 ">
+            <Info className="h-4 w-4" />
+            <AlertDescription>
+              인증 메일이 스팸 메일함으로 갈 수도 있습니다. <br />
+              메일함에 없다면 스팸 메일함을 확인해 주세요.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${

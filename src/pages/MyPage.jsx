@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Edit2, Trash2, Heart, Smile, AlertCircle } from "lucide-react";
+import {
+  Edit2,
+  Trash2,
+  Heart,
+  Smile,
+  AlertCircle,
+  SquareX,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -48,12 +55,12 @@ const ContentItem = ({ item, onToggleLike }) => (
       </p>
     </div>
     <div className="flex flex-col items-center">
-      <button
-        className="bg-[#FF2A00] text-white px-4 py-2 rounded mb-2"
+      <Button
+        className="bg-red-200 hover:bg-red-300 text-red-700 px-2 py-2 rounded-xl transition duration-300 ease-in-out"
         onClick={() => onToggleLike(item.productId)}
       >
-        <Heart size={20} />
-      </button>
+        찜 해제 <SquareX className="ml-1" size={20} />
+      </Button>
     </div>
   </div>
 );

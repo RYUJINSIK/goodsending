@@ -176,14 +176,14 @@ function ProductsDetail() {
         chatMessage.trim() !== ""
       ) {
         client.publish({
-          destination: `/app/message`, // 서버의 목적지에 맞게 설정
+          destination: `/app/message`,
           body: JSON.stringify({
             productId: productInfo.productId,
             message: chatMessage,
             type: "GENERAL_CHAT",
           }),
           headers: {
-            Access_Token: `Bearer ${token}`, // 예: 인증 토큰 추가
+            Access_Token: `Bearer ${token}`,
           },
         });
       }
