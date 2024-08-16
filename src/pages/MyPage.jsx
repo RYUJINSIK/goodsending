@@ -127,7 +127,6 @@ const MyProducts = ({ onUploadSuccess }) => {
         // size: 20,
       };
       const response = await getMyProducts(token, params);
-      console.log("get My Products", response);
 
       if (response && Array.isArray(response.content)) {
         setProducts(response.content);
@@ -479,7 +478,6 @@ const LikedProducts = () => {
   const fetchProducts = async (resetProducts = false) => {
     try {
       const response = await getLikedProducts(token, page, size, sortBy, isAsc);
-      console.log("좋아요 한 목록 : ", response.content);
       if (response && Array.isArray(response.content)) {
         setProducts((prev) =>
           resetProducts ? response.content : [...prev, ...response.content]

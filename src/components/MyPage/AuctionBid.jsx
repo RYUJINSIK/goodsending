@@ -36,8 +36,6 @@ const AuctionBid = () => {
   const fetchAuctionBids = async () => {
     try {
       const data = await getAuctionBid(token, userData.memberId, page, size);
-      console.log("data ? : data.content");
-      // setSuccessfulAuctions((prev) => [...prev, ...data.content]);
       setSuccessfulAuctions(data.content);
     } catch (error) {
       console.error("경매 신청 내역 조회 실패:", error);
@@ -45,7 +43,6 @@ const AuctionBid = () => {
   };
 
   const handleUpdateShipping = (orderId) => {
-    console.log("orderId ? : ", orderId);
     setSelectedOrderId(orderId);
     setIsDialogOpen(true);
   };
@@ -76,7 +73,6 @@ const AuctionBid = () => {
     };
 
     const handleSubmit = async (e) => {
-      console.log("배송지 정보 입력", receiverInfo);
       e.preventDefault();
       try {
         await updateReceiverInfo(token, selectedOrderId, receiverInfo);

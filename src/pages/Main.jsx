@@ -40,9 +40,11 @@ const Main = () => {
   }, [token]);
 
   const images = [
-    "../icon/banner1.png",
-    "https://media.istockphoto.com/id/108198324/ko/사진/고양이-새끼-공격하십시오.jpg?s=612x612&w=0&k=20&c=EnYiY2NrBVzwYnJX6DUTz9HwYMr1u3muKUsvI7vHO7I=",
-    "https://media.istockphoto.com/id/638051946/ko/사진/분홍색-베개가-있는-고양이-발-유리-아래에서-촬영.jpg?s=612x612&w=0&k=20&c=7QINmPYds1yRVXq75b00V13lhlHcA3BmYXG-rfcNGmE=",
+    "../icon/MainBanner_1.png",
+    "../icon/MainBanner_2.png",
+    "../icon/MainBanner_3.png",
+    "../icon/MainBanner_4.png",
+    "../icon/MainBanner_5.png",
   ];
 
   const navigate = useNavigate();
@@ -167,7 +169,7 @@ const Main = () => {
       <Carousel
         plugins={[
           Autoplay({
-            delay: 5000,
+            delay: 4000,
             stopOnInteraction: false,
             stopOnMouseEnter: true,
           }),
@@ -179,7 +181,7 @@ const Main = () => {
               <img
                 src={image}
                 alt={`슬라이드 이미지 ${index + 1}`}
-                className="w-full h-64 object-cover"
+                className="w-full h-auto object-cover"
               />
             </CarouselItem>
           ))}

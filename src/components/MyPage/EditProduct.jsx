@@ -38,7 +38,6 @@ const EditProduct = ({ productId, isOpen, onClose }) => {
   const fetchProductDetails = async () => {
     try {
       const product = await productDetails(productId);
-      console.log("상품정보 : ", product);
       if (product) {
         const [date, time] = product.startDateTime.split("T");
         const auctionTime = time.startsWith("12:") ? "AFTERNOON" : "EVENING";

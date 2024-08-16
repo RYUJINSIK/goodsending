@@ -36,7 +36,6 @@ const UserInfo = ({ user, token }) => {
     const cashAmount = parseInt(cash.replace(/,/g, ""), 10);
     try {
       const response = await chargeCash(token, user.memberId, cashAmount);
-      console.log("cash charged successfully:", response);
       updateUserInfo();
       setCash("");
       setIsDialogOpen(false); // Dialog 닫기
@@ -49,7 +48,6 @@ const UserInfo = ({ user, token }) => {
   const updateUserInfo = async () => {
     try {
       const userData = await getUserInfo(token);
-      console.log("User Data : ", userData);
       dispatch(setUserData(userData.data));
     } catch (error) {
       console.log(error);

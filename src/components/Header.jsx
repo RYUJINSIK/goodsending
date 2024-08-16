@@ -19,7 +19,6 @@ const Header = ({ openLogin }) => {
     try {
       // 먼저 서버에 로그아웃 요청을 보냅니다.
       const response = await logout(logoutToken);
-      console.log(response);
 
       // 서버 로그아웃이 성공하면 로컬 상태를 정리합니다.
       dispatch(clearToken());

@@ -56,7 +56,6 @@ export const editProduct = async (token, productId, requestBody) => {
         },
       }
     );
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error editing product:", error);
@@ -70,7 +69,6 @@ export const postBids = async (token, requestBody) => {
         Access_Token: `Bearer ${token}`,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -104,7 +102,6 @@ export const updatePassword = async (token, memberId, passwordData) => {
         },
       }
     );
-    console.log("Password update response:", response);
     return response.data;
   } catch (error) {
     console.error("Error updating password:", error);
@@ -115,7 +112,6 @@ export const updatePassword = async (token, memberId, passwordData) => {
 // 주문 수신자 정보
 
 export const updateReceiverInfo = async (token, orderId, receiverInfo) => {
-  console.log(token, orderId, receiverInfo);
   try {
     const response = await axios.put(
       `/api/orders/${orderId}/receiver-info`,
@@ -137,7 +133,6 @@ export const updateReceiverInfo = async (token, orderId, receiverInfo) => {
 // 캐시 충전
 
 export const chargeCash = async (token, memberId, cash) => {
-  console.log(memberId);
   try {
     const response = await axios.put(
       `/api/members/${memberId}/cash`,
@@ -162,7 +157,6 @@ export const toggleLikes = async (token, requestBody) => {
         Access_Token: `Bearer ${token}`,
       },
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -209,7 +203,6 @@ export const getLiveChat = async (productId, size, cursorId) => {
     }`;
 
     const response = await axios.get(url);
-    console.log(response);
     return response.data;
   } catch (error) {
     console.log(error);

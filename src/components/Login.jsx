@@ -27,7 +27,6 @@ function Login({ isOpen, onClose }) {
     };
     try {
       const token = await getLoginToken(requestBody);
-      console.log("? : ", token);
       dispatch(setToken(token));
       callUserInfo(token);
       onClose();
@@ -42,7 +41,6 @@ function Login({ isOpen, onClose }) {
   const callUserInfo = async (token) => {
     try {
       const userData = await getUserInfo(token);
-      console.log("User Data : ", userData);
       dispatch(setUserData(userData.data));
     } catch (error) {
       console.log(error);

@@ -154,7 +154,6 @@ function ProductsDetail() {
   const updateUserInfo = async () => {
     try {
       const userData = await getUserInfo(token);
-      console.log("User Data : ", userData);
       dispatch(setUserData(userData.data));
     } catch (error) {
       console.log(error);

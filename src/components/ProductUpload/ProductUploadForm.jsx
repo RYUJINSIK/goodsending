@@ -144,7 +144,6 @@ const ProductUploadForm = () => {
 
     try {
       const response = await productUpload(token, formData);
-      console.log("Upload successful:", response.data);
       toast.success("상품 판매 등록이 완료되었습니다 !");
       navigate("/");
     } catch (error) {

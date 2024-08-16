@@ -3,7 +3,6 @@ import axios from "./axios";
 export const getLoginToken = async (requestBody) => {
   try {
     const response = await axios.post(`/api/members/login`, requestBody);
-    console.log("Login : ", response);
     return response.headers.access_token;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -79,7 +78,6 @@ export const refreshAccessToken = async () => {
     const response = await axios.post("/api/members/tokenReissue", {
       withCredentials: true,
     });
-    console.log(response);
     return response;
   } catch (error) {
     console.error("Failed to refresh access token:", error);
