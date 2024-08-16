@@ -19,14 +19,12 @@ export const productUpload = async (token, requestBody) => {
 // 상품 조회
 export const getMyProducts = async (token, params) => {
   try {
-    console.log("Sending request with token:", token);
     const response = await axios.get(`api/products`, {
       headers: {
         Access_Token: `Bearer ${token}`,
       },
       params: { ...params },
     });
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error fetching my prroducts:", error);
@@ -117,6 +115,7 @@ export const updatePassword = async (token, memberId, passwordData) => {
 // 주문 수신자 정보
 
 export const updateReceiverInfo = async (token, orderId, receiverInfo) => {
+  console.log(token, orderId, receiverInfo);
   try {
     const response = await axios.put(
       `/api/orders/${orderId}/receiver-info`,
@@ -174,15 +173,11 @@ export const toggleLikes = async (token, requestBody) => {
 // 주문 배송 정보
 export const updateDelivery = async (token, orderId) => {
   try {
-    const response = await axios.put(
-      `/api/orders/${orderId}/delivery`,
-      {},
-      {
-        headers: {
-          Access_Token: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.put(`/api/orders/${orderId}/delivery`, {
+      headers: {
+        Access_Token: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("배송 정보 업데이트 중 오류 발생:", error);
@@ -295,6 +290,23 @@ export const getLikedProducts = async (token, page, size, sortBy, isAsc) => {
 export const getTOPBidProducts = async () => {
   try {
     const response = await axios.get("/api/products/top5/bidderCount");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getOrderList = async (token, memberId) => {
+  try {
+    const response = await axios.get(
+      `/api/orders?memberId=${memberId}&pageSize=100`,
+      {
+        headers: {
+          Access_Token: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.log(error);

@@ -87,7 +87,7 @@ const Header = ({ openLogin }) => {
           </>
         ) : (
           <Button
-            className="bg-blue-400 hover:bg-[#3B7DEC] text-white px-4 py-2 rounded-3xl"
+            className="bg-blue-400 hover:bg-[#3B7DEC] text-white px-4 py-2 rounded-xl"
             onClick={openLogin}
           >
             로그인

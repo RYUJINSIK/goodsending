@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Edit2, Trash2, Heart, Smile } from "lucide-react";
+import { Edit2, Trash2, Heart, Smile, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -43,7 +43,9 @@ const ContentItem = ({ item, onToggleLike }) => (
     />
     <div className="flex-grow">
       <h3 className="font-semibold">{item.name || item.productName}</h3>
-      <p className="text-red-500 font-bold">{item.price.toLocaleString()}원</p>
+      <p className="text-red-500 font-bold">
+        경매시작가 : {item.price.toLocaleString()}원
+      </p>
     </div>
     <div className="flex flex-col items-center">
       <button
@@ -61,15 +63,26 @@ const ContentArea = ({ tabValue, content, onDelete, onUploadSuccess }) => (
   <Card className="w-[750px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
     <div className="sticky top-0 bg-white z-10 pt-6 px-5">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold mb-4">{tabValue}</h2>
-        {tabValue !== "판매 상품 관리" && (
-          <p className="font-bold mb-4">전체 {content.length}개</p>
-        )}
+        <div className="text-2xl font-bold">{tabValue}</div>
+        <div className="flex items-center">
+          {tabValue === "등록 상품 관리" ? (
+            <div className="flex items-center bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full">
+              <AlertCircle size={16} className="mr-1" />
+              <span>
+                경매가 진행중이거나 종료된 상품은 수정 또는 삭제가 불가능합니다
+                !
+              </span>
+            </div>
+          ) : (
+            <p className="font-bold">전체 {content.length}개</p>
+          )}
+        </div>
       </div>
+
       <hr className="border-gray-300 mb-2" />
     </div>
     <div className="pl-5 overflow-y-auto h-[calc(80vh-70px)]">
-      {tabValue === "판매 상품 관리" ? (
+      {tabValue === "등록 상품 관리" ? (
         <MyProducts onUploadSuccess={onUploadSuccess} />
       ) : content.length > 0 ? (
         content.map((item, index) => (
@@ -114,6 +127,7 @@ const MyProducts = ({ onUploadSuccess }) => {
         // size: 20,
       };
       const response = await getMyProducts(token, params);
+      console.log("get My Products", response);
 
       if (response && Array.isArray(response.content)) {
         setProducts(response.content);
@@ -168,62 +182,82 @@ const MyProducts = ({ onUploadSuccess }) => {
   };
 
   return (
-    <div className="p-4">
-      <EditProduct
-        productId={editProductId}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
-      {Array.isArray(products) && products.length > 0 ? (
-        products.map((product) => (
-          <Card key={product.productId} className="mb-4 overflow-hidden">
-            <div className="flex items-center p-4">
-              <div className="w-1/5 flex items-center justify-center">
+    <div className="h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
+      <div className="pr-5 overflow-y-auto h-[calc(80vh-70px)]">
+        <EditProduct
+          productId={editProductId}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+        {Array.isArray(products) && products.length > 0 ? (
+          products.map((product) => (
+            <Card
+              key={product.productId}
+              className={`mb-4 overflow-hidden ${
+                product.status !== "UPCOMING" ? "bg-gray-100" : ""
+              }`}
+            >
+              <div className="flex items-center py-4 px-5">
                 <img
                   src={product.thumbnailUrl}
                   alt={product.name}
-                  className="w-20 h-20 object-cover rounded-lg"
+                  className="w-20 h-20 object-cover rounded-md mr-4"
                 />
-              </div>
-              <div className="w-2/5 px-4">
-                <div className="flex items-center mb-1">
-                  <h3 className="text-lg font-semibold mr-2">{product.name}</h3>
-                  {product.status === "UPCOMING" ? (
-                    <Edit2
-                      size={16}
-                      onClick={() => {
-                        openModal(product.productId);
-                      }}
-                      className="cursor-pointer"
-                    />
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold mb-1">{product.name}</h3>
+                  <p className="text-sm text-gray-600 truncate mb-2">
+                    {product.introduction}
+                  </p>
+                  {product.status === "ENDED" ? (
+                    <p className="text-red-500 font-bold">
+                      최종 낙찰 금액:{" "}
+                      {(product.finalPrice || product.price).toLocaleString()}원
+                    </p>
                   ) : (
-                    ""
+                    <p className="text-blue-500 font-bold">
+                      경매 시작가: {product.price.toLocaleString()}원
+                    </p>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 truncate">
-                  {product.introduction}
-                </p>
-              </div>
-              <div className="w-2/5 flex items-center justify-between">
-                <div className="flex items-center mr-4">
-                  <span className="mx-2 text-lg font-semibold">
-                    {product.price.toLocaleString()}원
-                  </span>
+                <div className="flex flex-col items-end">
+                  {product.status === "UPCOMING" ? (
+                    <div className="flex flex-row">
+                      <Button
+                        onClick={() => openModal(product.productId)}
+                        className="bg-green-50 text-green-600 border-green-200 hover:bg-green-100 mr-2"
+                        variant="outline"
+                      >
+                        <Edit2 size={16} className="mr-2" />
+                        수정
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteClick(product)}
+                        className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
+                        variant="outline"
+                      >
+                        <Trash2 size={16} className="mr-2" />
+                        삭제
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-gray-500">
+                      <span className="font-semibold">
+                        {product.status === "ONGOING"
+                          ? "경매 진행중"
+                          : "경매 종료"}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <Button
-                  onClick={() => handleDeleteClick(product)}
-                  className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                  variant="ghost"
-                >
-                  <Trash2 size={16} />
-                </Button>
               </div>
-            </div>
-          </Card>
-        ))
-      ) : (
-        <p>상품이 없습니다.</p>
-      )}
+            </Card>
+          ))
+        ) : (
+          <div className="flex justify-center items-center h-full">
+            <p>상품이 없습니다.</p>
+          </div>
+        )}
+      </div>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
@@ -264,8 +298,6 @@ const UserInfoContent = () => {
     }
   }, [access_token, userData.memberId]);
 
-  const formattedPrice = useFormatPrice(userInfo.cash);
-
   return (
     <Card className="min-w-[650px] h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white p-6">
       <Card className="min-w-[500px] min-h-[200px] bg-gray-white shadow-md p-5 mb-8">
@@ -287,7 +319,9 @@ const UserInfoContent = () => {
                 <div className="flex space-x-2">
                   <div className="text-center">
                     <h3 className="text-sm font-semibold">캐시</h3>
-                    <p className="text-md font-bold">{formattedPrice}원</p>
+                    <p className="text-md font-bold">
+                      {parseInt(userInfo.cash).toLocaleString()}원
+                    </p>
                   </div>
                   <div className="text-center">
                     <h3 className="text-sm font-semibold">포인트</h3>
@@ -484,27 +518,12 @@ const LikedProducts = () => {
     }
   };
 
-  const handleSort = (newSortBy) => {
-    if (newSortBy === sortBy) {
-      toggleSortOrder();
-    } else {
-      setSortBy(newSortBy);
-      setIsAsc(false);
-    }
-  };
-
   return (
     <Card className="h-full min-h-[600px] max-h-[80vh] overflow-hidden bg-white">
       <div className="sticky top-0 bg-white z-10 pt-6 px-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold mb-4">찜한 상품 목록</h2>
           <p className="font-bold mb-4">전체 {products.length}개</p>
-        </div>
-        <div>
-          <button onClick={() => handleSort("id")}>
-            내가 찜한 상품{" "}
-            {sortBy === "createDateTime" && (isAsc ? "오름차순" : "내림차순")}
-          </button>
         </div>
         <hr className="border-gray-300 mb-2" />
       </div>
@@ -581,7 +600,7 @@ const MyPage = () => {
   }, [token]);
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-[#e2e8f0] pt-28 px-4">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-[#e2e8f0] pt-28 ">
       <div className="w-full max-w-[1200px] flex gap-8">
         <div className="w-full h-auto flex gap-8">
           <Tabs
@@ -594,10 +613,10 @@ const MyPage = () => {
               <Card className="w-[300px] h-auto mb-6 bg-white">
                 <TabsList className="flex flex-col items-stretch h-auto">
                   {[
-                    { name: "찜한 상품", count: likedProductsCount },
-                    { name: "경매 신청 내역", count: auctionBidCount },
-                    { name: "경매 판매 내역", count: auctionSaleCount },
-                    { name: "판매 상품 관리", count: myProductsCount },
+                    { name: "찜한 상품" },
+                    { name: "경매 신청 내역" },
+                    { name: "경매 판매 내역" },
+                    { name: "등록 상품 관리" },
                   ].map((tab) => (
                     <TabsTrigger
                       key={tab.name}
@@ -609,7 +628,6 @@ const MyPage = () => {
                       }`}
                     >
                       <span>{tab.name}</span>
-                      {tab.count > 0 && <span>{tab.count}</span>}{" "}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -643,9 +661,9 @@ const MyPage = () => {
                 <TabsContent value="경매 판매 내역">
                   <AuctionSale />
                 </TabsContent>
-                <TabsContent value="판매 상품 관리">
+                <TabsContent value="등록 상품 관리">
                   <ContentArea
-                    tabValue="판매 상품 관리"
+                    tabValue="등록 상품 관리"
                     content={[]}
                     onUploadSuccess={fetchMyProducts}
                   />
