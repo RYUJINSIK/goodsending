@@ -269,7 +269,9 @@ VITE_API_URL="http://15.164.70.82:8080/"
 </details>
 
 <details>
+   
 <summary>🔍 [경매 상품] 검색 및 필터링 기능</summary>
+
 <div markdown="1">
 <h4>💡 사용자가 경매 상품을 검색할 때, 원하는 상품에 쉽고 빠르게 접근할 수 있는 검색 기능</h4>
 <img src="https://github.com/user-attachments/assets/553b6e89-39da-4fc8-9fea-1f3b2708cf04" width="70%">
@@ -288,10 +290,66 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <p>MySQL Ngram을 적용하여 검색 성능을 향상하거나, 대용량 데이터 처리가 필요할 경우를 대비하여 Elastic Search를 도입하여 대용량 인덱스를 관리하고 싶습니다.</p>
 </ul>
 </div>
+
 </details>
 
 
 ### 🧨 트러블 슈팅
+
+
+<details>  
+
+<summary>🧨 웹소켓 채팅 기능에서 한글 입력 후 엔터 시 두 번 전송되는 문제</summary>
+ 
+<div markdown="1">
+
+<h4>❓문제 상황 </h4>
+
+<p>웹소켓을 이용한 채팅 기능에서, 한글 입력 후 onkeydown 이벤트로 엔터를 입력할 때 동일한 메시지가 두 번 전송되는 문제가 발생</p>
+
+<p>이로 인해 채팅 메시지가 중복 전송되어 사용자 경험에 부정적인 영향을 미쳤음</p>
+
+<ul>
+
+<li>원인</li>
+
+<p>- 한글 입력 시 IME(입력기)가 활성화되며, 글자가 조합 중일 때와 조합이 완료된 후에 각각 이벤트가 발생하는 경우가 있음</p>
+
+<p>- onkeydown 이벤트가 두 번 발생해 동일한 메시지가 중복으로 전송되는 현상이 발생</p>
+
+<li>해결 방법</li>
+
+<p>- 과거에는 이 문제를 해결하기 위해 onKeyPress 이벤트를 사용할 수 있었지만, keypress 이벤트는 더 이상 권장되지 않음. MDN 문서에서도 keypress 이벤트가 표준에서 제외될 가능성이 있음을 경고하고 있음</p>
+
+<p>- onkeydown 이벤트를 그대로 사용하면서, IME 입력 중인지 여부를 감지하기 위해 KeyboardEvent.isComposing 속성을 활용</p>
+
+<p>isComposing 속성은 조합 문자를 작성할 때 true를 반환하므로, 이를 통해 한글 입력 중일 때 이벤트 처리를 막고, 조합이 완료된 후에만 메시지를 전송하도록 수정</p>
+
+<p>또한, 영어 입력 시에는 조합 문자가 없으므로, 중복 이벤트 문제가 발생하지 않음</p>
+
+<details>
+
+<summary>관련 코드</summary>
+
+```jsx
+
+const handleKeyDown = (e) => {
+// Enter 키를 누르고, altKey가 활성화되지 않았으며, IME 조합이 완료된 상태에서만 메시지 전송
+	if (e.key === "Enter" && !e.altKey && e.nativeEvent.isComposing === false) {
+		e.preventDefault();
+		sendMessage();
+		}
+	};
+
+```
+
+</details>
+ 
+</ul>
+ 
+</div>
+ 
+</details>
 
 <details>
 
@@ -300,7 +358,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <div markdown="1">
 
 <h4>❓문제 상황 </h4>
-<br/>
+
 <p>소켓 메시지를 전달할 때 클라이언트에서 토큰값을 활용하여 사용자 인증을 수행했으나, 토큰 만료 여부를 실시간으로 확인하지 못하는 문제가 발생</p>
 
 <p>토큰이 만료된 상태에서도 메시지가 전송되어 메세지가 전송이 되지않거나, 인증되지 않은 사용자가 접근할 가능성이 생김</p>
@@ -308,14 +366,48 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <ul>
 
 <li>원인</li>
-<br/>
+
 <p>- 소켓 통신 자체에서는 토큰 만료 여부를 바로 확인할 수 없기 때문에, 만료된 토큰으로도 메시지가 전송되는 상황이 발생</p>
+
 <p>- 서버로부터 토큰의 유효성을 검증받지 않고 메시지를 보내는 구조였기 때문에 발생한 문제</p>
 
 <li>해결 방법</li>
-<br/>
+
 <p>- 소켓 메시지를 전송하기 전에 토큰의 유효성을 확인하는 API를 호출하여, 유효한 토큰일 때만 소켓 메시지를 전송하도록 로직을 수정</p>
+
 <p>- 토큰 검증 API를 호출한 후, 검증에 성공하면 메시지를 전송하고, 실패하면 재로그인 또는 에러 처리를 진행</p>
+
+<details>
+
+<summary>관련 코드</summary>
+
+```jsx
+const handleSendMessage = (chatMessage) => {
+	if (tokenCheck()) { // 토큰 검증 API 호출 ( true , false 반환 )
+		if (
+			client &&
+			connectionStatus === "CONNECTED" &&
+			chatMessage.trim() !== ""
+		) {
+		client.publish({
+			destination: `/app/message`,
+			body: JSON.stringify({
+				productId: productInfo.productId,
+				message: chatMessage,
+				type: "GENERAL_CHAT",
+			}),
+			headers: {
+				Access_Token: `Bearer ${token}`,
+			},
+		});
+	}
+} else {
+	alert("잠시 후 다시요청하세요.");
+	}
+};
+```
+
+</details>
 
 <p>이를 통해 만료된 토큰으로 소켓 메시지가 전송되는 문제를 해결하고, 보안성을 강화할 수 있었음</p>
 
@@ -324,6 +416,8 @@ VITE_API_URL="http://15.164.70.82:8080/"
 </div>
 
 </details>
+
+
 
 <details>
 
@@ -340,7 +434,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <ul>
 
 <li>원인</li>
-<br/>
+
 <p>- Redux는 상태 관리를 위해 사용하는 라이브러리지만, 상태는 메모리에 저장되기 때문에 페이지 새로고침 시 메모리가 초기화되어 Redux 상태도 함께 사라짐</p>
 
 <p>- 이로 인해 Redux로 관리 중이던 유저 정보가 새로고침 시 유지되지 않고 초기화되는 현상이 발생</p>
@@ -353,13 +447,69 @@ VITE_API_URL="http://15.164.70.82:8080/"
 
 <p>- 아래와 같이 redux-persist를 적용하여 Redux 상태를 로컬 스토리지에 저장하도록 설정</p>
 
-<p>코드 블록</p>
+<details>
+
+<summary>관련 코드</summary>
+
+```jsx
+
+import { persistStore, persistReducer } from "redux-persist";
+
+import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+
+import { createStore } from "redux";
+
+import rootReducer from "./reducers"; // root reducer import
+
+  
+
+const persistConfig = {
+
+key: "root",
+
+storage,
+
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = createStore(persistedReducer);
+
+export const persistor = persistStore(store);
+
+```
+
+</details>
+
+  
 
 <p>이제 유저 정보가 Redux에 저장되면, 새로고침 후에도 로컬 스토리지에서 해당 정보가 복구되어 상태가 유지됨</p>
 
 <p>추가 조치: 로그아웃 시에는 persist 데이터를 삭제하여, 유저 데이터가 브라우저에 남아있지 않도록 함. 이는 보안적으로 민감한 유저 정보가 로그아웃 이후에도 남아있는 것을 방지함</p>
 
-<p>코드블록</p>
+  
+
+<details>
+
+<summary>관련 코드</summary>
+
+```jsx
+
+const handleLogout = () => {
+
+persistor.purge(); // 로그아웃 시 저장된 상태 삭제
+
+// 기타 로그아웃 처리 로직...
+
+};
+
+  
+
+```
+
+</details>
+
+  
 
 </ul>
 
@@ -375,27 +525,36 @@ VITE_API_URL="http://15.164.70.82:8080/"
 
 <h4>❓문제 상황 </h4>
 
-<b>폼 데이터 전송 시 멀티파트 데이터로 전송해야 할 파일이 올바르게 처리 되지 않음</b>
+<span>폼 데이터 전송 시 멀티파트 데이터로 전송해야 할 파일이 올바르게 처리 되지 않음</span>
+
 <p>에러 메시지 400 Bad Request, 415 Unsuppoted Media Type 등</p>
+
 <p>파일과 폼 데이터가 정상적으로 서버에 전송되어야 하는데 파일 업로드 실패 발생</p>
 
 <ul>
 
 <li>원인</li>
-<br/>
+
 <p>- 폼 데이터 : 일반적으로 텍스트 필드만 포함, application/json 형식으로 전송</p>
+
 <p>- 멀티파트 데이터: 파일 업로드를 포함, multipart/form-data 형식으로 전송</p>
+
 <p>- 잘못된 enctype 설정으로 인해 파일 선택 및 전송 과정에서 오류 발생</p>
 
 <li>해결 방법</li>
-<br/>
+
 <p>- 폼 설정 확인 후 형식 변경</p>
+
 <p>- 파일 크기 제한 확인 : 서버에서 설정한 최대 파일 크기 초과하는 지 확인</p>
+
 <p>- 브라우저 콘솔 로그 확인 : 네트워크 요청 및 응답을 확인하여 오류 메시지 검토</p>
+
 </ul>
+
 </div>
 
 </details>
+
 
 
 ---
