@@ -6,6 +6,9 @@
 
 
 ## 📌 프로젝트 소개
+
+📅 프로젝트 기간 : 2024.07.19 ~ 2024.08.16
+
 ![굿즈엔딩 목업](https://github.com/user-attachments/assets/e19980ec-61bb-4ec6-952b-fef4573ba56f)
 
 🧸 판매하고 싶은 상품을 경매에 등록해보세요!
@@ -14,16 +17,12 @@
 
 **GoodsEnding**은 더 이상 필요 없어진 굿즈를 실시간 경매를 통해 구매하고 판매할 수 있는 플랫폼입니다. 사용자는 간편하게 상품을 등록하고, 다른 사용자와 실시간 채팅으로 소통하며 경매에 참여할 수 있습니다.
 
-🔗 [GitHub 링크](https://github.com/goods-ending)
-
 🔗 [GOODSENDING-FE GITHUB](https://github.com/goods-ending/goodsending-fe)
 
 🔗 [팀 프로젝트 노션](https://nervous-mule-411.notion.site/GoodsEnding-51dccf65d0b843639f070db0a3866105?pvs=4)
 
 🔗 [시연 영상](https://www.youtube.com/watch?v=0cbSPnoaRMQ)
 
-
-📅 프로젝트 기간 : 2024.07.19 ~ 2024.08.16
 
 
 
@@ -55,64 +54,13 @@ VITE_API_URL="http://15.164.70.82:8080/"
    
 ---
 
-### 🧙 기술적 의사결정
-- `Yarn` - Yarn은 패키지 관리 도구로, 패키지를 설치할 때 캐시를 사용하여 이전에 다운로드한 패키지를 재사용하므로 설치 속도가 빠르고, 대규모 프로젝트에 효율적입니다.  `yarn.lock` 파일을 생성하여 의존성의 정확한 버전을 기록하기에 팀원 간의 환경 차이를 줄이고, 일관된 빌드를 보장하며 오류 발생 시 명확하고 구체적인 메시지를 제공하여 문제 해결을 용이하게 해준다는 장점이 있어 패키지 관리 도구로 Yarn을 사용했습니다.
-- `Tailwind CSS` - Tailwind CSS는 미리 정의된 유틸리티 클래스를 사용하여 빠르게 스타일을 적용할 수 있기에 스타일링에 소요되는 시간을 크레 줄일 수 있다는 장점이 있습니다. 설정 파일을 통해 쉽게 커스터마이즈 할 수 있고 모든 스타일이 클래스 형태로 정의되어 팀원간의 스타일링 차이를 최소화할 수 있다는 장점이 있습니다. 
-- `Axios` - Fetch는 기본적인 기능이 필요할 때는 충분히 사용할 수 있지만, 에러 처리와 추가 기능 구현에 번거로움이 있을 수 있습니다. Fetch와 비교하여 에러 객체를 통해 상세한 응답 정보를 제공할 수 있어 에러 처리에 용이 합니다. 요청과 응답을 가로채는 `Axios interceptor` 기능을 제공하여 토큰 재발급 및 요청 수정 등을 쉽게 처리할 수 있습니다. 또한 JSON 데이터를 자동으로 변환해주고, 파일 업로드를 위한 설정이 간편하며 다양한 브라우저에서 잘 작동한다는 브라우저 호환성이 뛰어나다는 점에 Axios를 사용했습니다.
-
-### 🔨 기술 스택
-
-| Frontend                                                                                                                                                                                                                                                 | Backend                                                                                                                                                                                                                                                                                      | CI / CD                                                                                                                                            |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Language : JavaScript (ES6)<br>- Framework : React<br>- State Management : Redux<br>- Build Tool : AWS Amplify<br>- Package Manager : yarn<br>- UI Library : Tailwind CSS<br>- HTTP Client : Axios<br>- Formatting : Prettier<br>- Version Control : Git | Language : Java 17<br>- Framework : SpringBoot<br>- Build Toole : Gradle<br>- DB : MySQL, Redis<br>- Test : Postman<br>- JPA<br>- Auth : JWT<br>- Spring Security<br>- Docker<br>- Cloud Storage Service : AWS S3<br>- WebSocket<br>- Spring Scheduler<br>- Query DSL<br>- SMTP<br>- swagger | Deploy<br>    - AWS EC2<br>    - Docker<br>    - Github Actions<br>    - AWS ECR<br>- Communication<br>    - Slack<br>    - Github<br>    - Notion |
-
-#### **Frontend**
-- Language : JavaScript (ES6)
-- Framework : React
-- State Management : Redux
-- Build Tool : AWS Amplify
-- Package Manager : yarn
-- UI Library : Tailwind CSS
-- HTTP Client : Axios
-- Formatting : Prettier
-- Version Control : Git
-
-#### **Backend**
-- Language : Java 17
-- Framework : SpringBoot
-- Build Toole : Gradle
-- DB : MySQL, Redis
-- Test : Postman
-- JPA
-- Auth : JWT
-- Spring Security
-- Docker
-- Cloud Storage Service : AWS S3
-- WebSocket
-- Spring Scheduler
-- Query DSL
-- SMTP
-- swagger
-
-#### **CI / CD**
-
-- Deploy
-    - AWS EC2
-    - Docker
-    - Github Actions
-    - AWS ECR
-- Communication
-    - Slack
-    - Github
-    - Notion
-
 
 ### 💡 주요 기능 소개
 <details>
 <summary>👥 [사용자] 회원 가입</summary>
 <div markdown="1">
 <h4>💡 실제 해당 메일 계정의 소유 여부를 검증하기 위해 인증코드를 발급하고 확인</h4>
-<img src="https://github.com/user-attachments/assets/0077c91b-90f5-4e8e-955a-36be9010dded" width="70%">
+<img src="https://github.com/user-attachments/assets/0077c91b-90f5-4e8e-955a-36be9010dded" width="80%">
 <ul>
 <li>1️⃣ SecureRandom.getInstanceStrong() 난수 생성 메서드</li>
 <p>- 생성되는 숫자는 6자리 밖에 안되지만 강력한 보안성을 위해 사용</p>
@@ -130,7 +78,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>🔐 [사용자] 로그인 / 로그아웃</summary>
 <div markdown="1">
 <h4>💡 Security를 적용하여, 인증 시 Access Token과 Refresh Token 발급</h4>
-<img src="https://github.com/user-attachments/assets/aa7473d5-64b3-451e-9ccc-bceb2ea9689c" width="70%">
+<img src="https://github.com/user-attachments/assets/4bb57c80-5e3f-4d0b-8f93-7ba20268285d" >
 <ul>
 <li>1️⃣ 사용자 정보를 통한 JWT 토큰을 발급하는 방식으로 구현</li>
 <li>2️⃣ JWT 인증 필터를 이용하여 자동적으로 토큰의 유효성 검사를 하도록 설정</li>
@@ -146,7 +94,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>🪪 [사용자] 마이페이지</summary>
 <div markdown="1">
 <h4>💡 로그인 한 회원은 자신이 보유한 캐시 와 포인트를 확인 할 수 있고, 비밀번호 변경 및 캐시 충전 가능</h4>
-<img src="https://github.com/user-attachments/assets/2fbcbced-af76-4c10-87b2-e03ab4b856c0" width="70%">
+<img src="https://github.com/user-attachments/assets/2957af92-1f95-428c-9186-a98f397e8238" >
 <ul>
 <li>@AuthenticationPrincipal 역할을 하는 사용자 정의 애너테이션 @memberId생성
 인증된 사용자의 memberId를 쉽게 추출할 수 있고, 유지 보수 용이성과 코드 중복을 줄이기 위해 애너테이션 @memberId를 생성하여 사용</li>
@@ -160,7 +108,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>💰 캐시 및 포인트</summary>
 <div markdown="1">
 <h4>💡 서비스 수익화 및 관리를 위한 캐시 및 포인트 서비스</h4>
-<img src="https://github.com/user-attachments/assets/8c92cc83-6fbe-44b5-b62a-8cf599e08db6" width="70%">
+<img src="https://github.com/user-attachments/assets/2fbcbced-af76-4c10-87b2-e03ab4b856c0" >
 <ul>
 <li>1️⃣ 보증금 회수 및 환불</li>
 <p>- 무분별한 상품 등록을 막고자 보증금 서비스 도입</p>
@@ -178,10 +126,24 @@ VITE_API_URL="http://15.164.70.82:8080/"
 </details>
 
 <details>
+<summary>🏷️ [상품] 상품 판매 등록</summary>
+<div markdown="1">
+<h4>💡 상품 판매를 위한 등록</h4>
+<img src="https://github.com/user-attachments/assets/11bd9b3c-78a4-4cc8-8aec-f0d824cdb5eb" width="80%">
+<ul>
+<li>1️⃣ 경매를 위한 상품 등록</li>
+<p>- 10mb 이하의 이미지만 업로드 가능</p>
+<p>- 사진은 최대 5장까지 등록 가능</p>
+<p>- 상품 등록에 대한 기준점을 익일로 잡고, 경매 시작 날짜를 등록한 날 익일부터 등록 가능</p>
+</ul>
+</div>
+</details>
+
+<details>
 <summary>📋 [주문] 낙찰된 주문 관리</summary>
 <div markdown="1">
 <h4>💡 낙찰된 주문 관리[배송지 정보 입력 ➡️ 배송 처리 ➡️ 거래 확정]</h4>
-<img src="https://github.com/user-attachments/assets/3d2688a1-527b-44d4-b159-c32f47854aa4" width="70%">
+<img src="https://github.com/user-attachments/assets/3d2688a1-527b-44d4-b159-c32f47854aa4" width="80%">
 <ul>
 <p>구현한 기능</p>
 <li>1️⃣ 낙찰자의 배송받을 배송지주소, 연락처, 수신자명 업데이트</li>
@@ -198,7 +160,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>✨ [주문] 낙찰자 선정 및 주문 진행</summary>
 <div markdown="1">
 <h4>💡 5분동안 추가 입찰이 없을 경우 낙찰자가 선정되어 주문 진행</h4>
-<img src="https://github.com/user-attachments/assets/ecc76973-32c8-4e3a-be52-f68e46482205" width="70%">
+<img src="https://github.com/user-attachments/assets/c4dffb95-cb9a-4567-9045-3fec229542fd">
 <ul>
 <p>구현한 기능</p>
 <li>1️⃣ Redis : key expiration event</li>
@@ -215,7 +177,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>📊 [인기 순위] 경매 상품 인기 순위</summary>
 <div markdown="1">
 <h4>💡 경매 상품의 인기 순위를 입찰자와 좋아요 수를 기준으로 조회. 경매 시간대에는 입찰자, 경매 시간대가 아닌 경우 좋아요 수를 기준으로 인기 순위를 조회</h4>
-<img src="https://github.com/user-attachments/assets/85bb2cf2-2bd1-4e87-bc48-5ad1f3840cb2" width="70%">
+<img src="https://github.com/user-attachments/assets/da1a706e-653e-4d62-ae55-d9895f94c2f9">
 <ul>
 <p>구현한 기능</p>
 <li>1️⃣ Redis를 이용한 캐싱 처리</li>
@@ -231,7 +193,7 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <summary>💬 [채팅] 실시간 경매 상품 채팅</summary>
 <div markdown="1">
 <h4>💡 실시간 상품에 대한 채팅 참여 및 입찰,낙찰 내역을 확인</h4>
-<img src="https://github.com/user-attachments/assets/5c1053b7-2bda-4113-b4d3-30e331f86c5c" width="70%">
+<img src="https://github.com/user-attachments/assets/667d28a4-3352-4924-8774-a099ded34068" >
 <ul>
 <li>1️⃣ Web Socket</li>
 <p>- 실시간 양방향 데이터 송수신을 위한 웹소켓 활용</p>
@@ -253,17 +215,12 @@ VITE_API_URL="http://15.164.70.82:8080/"
 <img src="https://github.com/user-attachments/assets/b1696f09-ac2a-4b64-b15f-30b3069c29ca" width="70%">
 <img src="https://github.com/user-attachments/assets/92f23e5a-23ab-4353-b846-e81963a4f8bf" width="70%">
 <ul>
-<li>1️⃣ 보증금 회수 및 환불</li>
-<p>- 무분별한 상품 등록을 막고자 보증금 서비스 도입</p>
-<p>- 상품을 등록시 판매자의 캐시에서 보증금 지불</p>
-<p>- 보증금 금액: 경매 최소 가격의 5%(최소 3000원)</p>
-<p>- 무분별한 상품 등록을 막고자 보증금 서비스 도입</p>
-<li>2️⃣ 포인트 적립</li>
-<p>- 확정금액(=낙찰자의 입찰가)의 2.5%의 포인트가 낙찰자 포인트에 적립</p>
-<li>3️⃣ 수수료 징수</li>
-<p>- 상품의 주문이 거래 완료 시 서비스는 확정 금액(=낙찰자의 최종 입찰가)의 5%를 수수료로 징수 후 남은 금액을 판매자에게 지급</p>
-<li><h4>추가적으로 구현하고 싶은 기능</h4></li>
-<p>수수료, 보증금을 관리하는 관리자 기능</p>
+<li>1️⃣ 찜 등록 기능</li>
+<p>- 회원이 해당 상품을 클릭하면 찜 목록에 추가, 상품이 찜 목록에 정상적으로 추가되면 CREATE_SUCCESS 메세지, 이미 상품이 찜 목록에 존재할 시에는 ALREADY_LIKE 메세지를 전송</p>
+<li>2️⃣ 찜 취소 기능</li>
+<p>- 회원이 해당 상품을 다시 클릭하면 찜목록에서 삭제. 상품이 찜 목록에서 삭제되면 DELETE_SUCCESS 메세지, 이미 상품이 삭제되었으면 DELETED_LIKE 메세지를 전송</p>
+<li>3️⃣ 찜 목록 조회 기능</li>
+<p>- 회원이 찜하기한 상품의 리스트를 출력, 회원이 좋아요한 모든 상품 목록이 출력</p>
 </ul>
 </div>
 </details>
@@ -274,8 +231,8 @@ VITE_API_URL="http://15.164.70.82:8080/"
 
 <div markdown="1">
 <h4>💡 사용자가 경매 상품을 검색할 때, 원하는 상품에 쉽고 빠르게 접근할 수 있는 검색 기능</h4>
-<img src="https://github.com/user-attachments/assets/553b6e89-39da-4fc8-9fea-1f3b2708cf04" width="70%">
-<img src="https://github.com/user-attachments/assets/d730e54a-aca5-4ce9-86dd-3de72c8646d2" width="70%">
+<img src="https://github.com/user-attachments/assets/553b6e89-39da-4fc8-9fea-1f3b2708cf04" width="80%">
+<img src="https://github.com/user-attachments/assets/d730e54a-aca5-4ce9-86dd-3de72c8646d2" width="80%">
 <ul>
 <li>1️⃣ QueryDSL을 사용한 검색 기능</li>
 <p>- 무분별한 상품 등록을 막고자 보증금 서비스 도입</p>
@@ -293,6 +250,39 @@ VITE_API_URL="http://15.164.70.82:8080/"
 
 </details>
 
+---
+### 🧙 기술적 의사결정
+- `Yarn` - Yarn은 패키지 관리 도구로, 패키지를 설치할 때 캐시를 사용하여 이전에 다운로드한 패키지를 재사용하므로 설치 속도가 빠르고, 대규모 프로젝트에 효율적입니다.  `yarn.lock` 파일을 생성하여 의존성의 정확한 버전을 기록하기에 팀원 간의 환경 차이를 줄이고, 일관된 빌드를 보장하며 오류 발생 시 명확하고 구체적인 메시지를 제공하여 문제 해결을 용이하게 해준다는 장점이 있어 패키지 관리 도구로 Yarn을 사용했습니다.
+- `Tailwind CSS` - Tailwind CSS는 미리 정의된 유틸리티 클래스를 사용하여 빠르게 스타일을 적용할 수 있기에 스타일링에 소요되는 시간을 크레 줄일 수 있다는 장점이 있습니다. 설정 파일을 통해 쉽게 커스터마이즈 할 수 있고 모든 스타일이 클래스 형태로 정의되어 팀원간의 스타일링 차이를 최소화할 수 있다는 장점이 있습니다. 
+- `Axios` - Fetch는 기본적인 기능이 필요할 때는 충분히 사용할 수 있지만, 에러 처리와 추가 기능 구현에 번거로움이 있을 수 있습니다. Fetch와 비교하여 에러 객체를 통해 상세한 응답 정보를 제공할 수 있어 에러 처리에 용이 합니다. 요청과 응답을 가로채는 `Axios interceptor` 기능을 제공하여 토큰 재발급 및 요청 수정 등을 쉽게 처리할 수 있습니다. 또한 JSON 데이터를 자동으로 변환해주고, 파일 업로드를 위한 설정이 간편하며 다양한 브라우저에서 잘 작동한다는 브라우저 호환성이 뛰어나다는 점에 Axios를 사용했습니다.
+
+### 🔨 기술 스택
+
+
+#### **Frontend**
+- Language : JavaScript (ES6)
+- Framework : React
+- State Management : Redux
+- Build Tool : AWS Amplify
+- Package Manager : yarn
+- UI Library : Tailwind CSS
+- HTTP Client : Axios
+- Formatting : Prettier
+- Version Control : Git
+
+#### **CI / CD**
+
+- Deploy
+    - AWS EC2
+    - Docker
+    - Github Actions
+    - AWS ECR
+- Communication
+    - Slack
+    - Github
+    - Notion
+
+---
 
 ### 🧨 트러블 슈팅
 
