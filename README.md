@@ -38,6 +38,7 @@
 <summary>👥 [사용자] 회원 가입</summary>
 <div markdown="1">
 <h4>💡 실제 해당 메일 계정의 소유 여부를 검증하기 위해 인증코드를 발급하고 확인</h4>
+<p>이메일 인증을 위해 SMTP 서버를 사용하여 인증 코드를 발급 및 확인 화면 구현. </p>
 <img src="https://github.com/user-attachments/assets/0077c91b-90f5-4e8e-955a-36be9010dded" width="80%">
 </div>
 </details>
@@ -46,6 +47,7 @@
 <summary>🔐 [사용자] 로그인 / 로그아웃</summary>
 <div markdown="1">
 <h4>💡 Security를 적용하여, 인증 시 Access Token과 Refresh Token 발급</h4>
+<p> 로그인 시 JWT (JSON Web Token) 기반 인증 방식을 적용하여 Access Token과 Refresh Token을 발급. Refresh Token을 통해 토큰 갱신 로직 구현. </p>
 <img src="https://github.com/user-attachments/assets/4bb57c80-5e3f-4d0b-8f93-7ba20268285d" >
 <ul>
 <li>1️⃣ 사용자 정보를 통한 JWT 토큰을 발급하는 방식으로 구현</li>
@@ -57,6 +59,7 @@
 <summary>🪪 [사용자] 마이페이지</summary>
 <div markdown="1">
 <h4>💡 로그인 한 회원은 자신이 보유한 캐시 와 포인트를 확인 할 수 있고, 비밀번호 변경 및 캐시 충전 가능</h4>
+<p> 사용자 정보와 캐시/포인트 데이터를 Redux로 관리하며, Redux-Persist를 통해 새로고침 시 상태 유지. 비밀번호 변경 화면은 사용자 경험을 고려한 동적 폼 구성. </p>
 <img src="https://github.com/user-attachments/assets/2957af92-1f95-428c-9186-a98f397e8238" >
 </div>
 </details>
@@ -65,6 +68,7 @@
 <summary>💰 캐시 및 포인트</summary>
 <div markdown="1">
 <h4>💡 서비스 수익화 및 관리를 위한 캐시 및 포인트 서비스</h4>
+<p> 서비스 수익화를 위해 캐시 시스템 설계. 경매 등록 시 보증금 지불 로직은 백엔드에서 처리하며, 최소 금액 계산 로직은 서버에서 수행. </p>
 <img src="https://github.com/user-attachments/assets/2fbcbced-af76-4c10-87b2-e03ab4b856c0" >
 <ul>
 <li>1️⃣ 보증금 회수 및 환불</li>
@@ -80,6 +84,7 @@
 <summary>🏷️ [상품] 상품 판매 등록</summary>
 <div markdown="1">
 <h4>💡 상품 판매를 위한 등록</h4>
+<p> 이미지 업로드는 AWS S3를 사용하여 저장하며, 파일 크기 및 확장자 검증 로직 포함. 파일 선택 및 미리보기 기능 제공. 업로드된 파일은 서버로 전송하기 위해 multipart/form-data 형식으로 처리. </p>
 <img src="https://github.com/user-attachments/assets/11bd9b3c-78a4-4cc8-8aec-f0d824cdb5eb" width="80%">
 <ul>
 <li>1️⃣ 경매를 위한 상품 등록</li>
@@ -94,6 +99,7 @@
 <summary>📋 [주문] 낙찰된 주문 관리</summary>
 <div markdown="1">
 <h4>💡 낙찰된 주문 관리[배송지 정보 입력 ➡️ 배송 처리 ➡️ 거래 확정]</h4>
+<p> 주문 상태를 단계별로 시각화하여 사용자에게 명확히 전달. 배송 정보 입력 폼은 팝업 폼 형태로 적용.</p>
 <img src="https://github.com/user-attachments/assets/3d2688a1-527b-44d4-b159-c32f47854aa4" width="80%">
 <ul>
 <p>구현한 기능</p>
@@ -109,6 +115,7 @@
 <summary>✨ [주문] 낙찰자 선정 및 주문 진행</summary>
 <div markdown="1">
 <h4>💡 5분동안 추가 입찰이 없을 경우 낙찰자가 선정되어 주문 진행</h4>
+<p> 실시간 경매 종료 후 낙찰자 정보를 화면에 표시하며, 주문 진행 상태를 동적으로 업데이트. 경매 진행 중 새로운 낙찰자 업데이트 시 5분 타이머 전용 컴포넌트 재 렌더링으로 남은시간 표시</p>
 <img src="https://github.com/user-attachments/assets/c4dffb95-cb9a-4567-9045-3fec229542fd">
 </div>
 </details>
@@ -125,6 +132,7 @@
 <summary>💬 [채팅] 실시간 경매 상품 채팅</summary>
 <div markdown="1">
 <h4>💡 실시간 상품에 대한 채팅 참여 및 입찰,낙찰 내역을 확인</h4>
+<p> WebSocket과 STOMP 프로토콜을 사용하여 활용하여 실시간 양방향 통신 및 채팅 UI 구성. 커스텀 핸들러로 메시지 송수신 시 사용자 식별 처리. </p>
 <img src="https://github.com/user-attachments/assets/667d28a4-3352-4924-8774-a099ded34068" >
 <ul>
 <li>1️⃣ Web Socket</li>
